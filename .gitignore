@@ -1,0 +1,55 @@
+# Исключаем все .md файлы кроме основной логики
+*.md
+!ОСНОВНАЯ_ЛОГИКА_ИИ_ДИСПЕТЧЕРА.md
+
+# Исключаем все .txt файлы
+*.txt
+
+# Исключаем тестовые файлы
+test_*.py
+
+# Исключаем файлы документации и примеров
+ati_api_v2_structure.json
+ati_dictionaries_new.py
+fetch_ati_dictionaries.py
+.cursorignore
+
+# Исключаем конфигурационные файлы с секретами
+config.env
+.env
+*.env
+!config.env.example
+
+# Исключаем служебные файлы
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+.idea/
+.vscode/
+*.log
+logs/
+
+# Исключаем временные файлы
+*.tmp
+*.bak
+*.swp
+*~
+
+# Исключаем файлы с ключами API
+*api_key*
+*secret*
+*token*
+*credentials*
+
+# Исключаем системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Исключаем словари (большие файлы)
+*.ini 
