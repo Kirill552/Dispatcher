@@ -41,6 +41,10 @@ services:
     tmpfs:
       - /tmp
       - /home/node/.npm:uid=1000,gid=1000
+      - /home/node/.openclaw/canvas:uid=1000,gid=1000
+      - /home/node/.openclaw/cron:uid=1000,gid=1000
+      - /home/node/.openclaw/logs:uid=1000,gid=1000
+      - /home/node/.openclaw/memory:uid=1000,gid=1000
     security_opt:
       - no-new-privileges:true
     command: ["node", "/home/node/.openclaw-bin/node_modules/openclaw/dist/index.js", "gateway", "--port", "18790", "--verbose"]
