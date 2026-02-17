@@ -10,25 +10,19 @@
     "telegram": {
       "enabled": true,
       "dmPolicy": "open",
+      "allowFrom": ["*"],
       "streamMode": "block"
-    },
-    "webchat": {
-      "enabled": true,
-      "dmPolicy": "open",
-      "streamMode": "stream",
-      "cors": {
-        "origins": ["https://ai-dispatcher.ru"]
-      }
     }
   },
   "commands": {
-    "allowFrom": ["408001372"]
+    "allowFrom": { "408001372": ["*"] }
   },
   "session": {
     "dmScope": "per-channel-peer"
   },
   "gateway": {
-    "bind": "loopback",
+    "mode": "local",
+    "bind": "lan",
     "port": 18790,
     "auth": {
       "mode": "token",
