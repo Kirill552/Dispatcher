@@ -16,14 +16,14 @@ services:
       - ./.agents/skills/dispatcher-admin/SKILL.md:/home/node/.openclaw/agents/skills/dispatcher-admin/SKILL.md:ro
       # Расширения
       - ./extensions/ati-cargo:/home/node/.openclaw/extensions/ati-cargo:ro
-      - ./extensions/rbac:/home/node/.openclaw/extensions/rbac:ro
+      # RBAC берётся из форка (совместим с патчами ядра)
       # models.json
       - ./docker-data/models.json:/home/node/.openclaw/agents/main/agent/models.json:ro
       # npm зависимости (предустановленные на хосте)
       - ./docker-data/node_modules:/home/node/.openclaw/node_modules:ro
       - ./package.json:/home/node/.openclaw/package.json:ro
-      # OpenClaw бинарник (предустановлен на хосте)
-      - ./docker-data/openclaw-bin:/home/node/.openclaw-bin:ro
+      # OpenClaw форк с RBAC-патчами (собирается на хосте, запускается в Docker)
+      - ./docker-data/openclaw-fork:/home/node/.openclaw-fork:ro
       # Персистентные данные (память, сессии, lancedb)
       - openclaw-data:/home/node/.openclaw/agents/main/sessions
       - openclaw-memory:/home/node/.openclaw/workspace
@@ -36,7 +36,7 @@ services:
       - OPENAI_BASE_URL=https://openrouter.ai/api/v1
       - ATI_API_TOKEN=${ATI_API_TOKEN}
       - HOME=/home/node
-      - NODE_PATH=/home/node/.openclaw-bin/node_modules
+      - NODE_PATH=/home/node/.openclaw-fork/node_modules
     # Старт от root → chown → drop к node через runuser
     # Необходимо: Docker создаёт /home/node/.openclaw как root, а OpenClaw нужно
     # писать temp-файлы рядом с openclaw.json для atomic write (auto-enable Telegram)
@@ -58,7 +58,7 @@ services:
         chown node:node /home/node/.openclaw
         cp /config/openclaw.json /home/node/.openclaw/openclaw.json
         chown node:node /home/node/.openclaw/openclaw.json
-        exec /usr/sbin/runuser --preserve-environment -u node -- node /home/node/.openclaw-bin/node_modules/openclaw/dist/index.js gateway --port 18790 --verbose
+        exec /usr/sbin/runuser --preserve-environment -u node -- node /home/node/.openclaw-fork/dist/index.js gateway --port 18790 --verbose
 
   site:
     image: node:22-slim

@@ -15,7 +15,7 @@
     }
   },
   "commands": {
-    "allowFrom": { "408001372": ["*"] }
+    "allowFrom": ["408001372"]
   },
   "session": {
     "dmScope": "per-channel-peer"
@@ -94,6 +94,12 @@
           "rateLimit": {
             "maxBlockedPerMinute": 30,
             "action": "suppress-logs"
+          },
+          "systemCommands": {
+            "mode": "allowlist",
+            "allowed": ["/start"],
+            "guestHelp": "Я диспетчер грузоперевозок. Напишите что и куда нужно перевезти, я найду перевозчика.",
+            "blockResponse": "Эта команда недоступна."
           }
         }
       }

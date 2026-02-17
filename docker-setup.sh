@@ -26,18 +26,18 @@ cat > docker-data/models.json << 'EOF'
 }
 EOF
 
-# OpenClaw бинарник (node:22-slim не имеет git, npx не работает)
-echo "=== 2. Установка OpenClaw в docker-data/openclaw-bin ==="
-mkdir -p docker-data/openclaw-bin
-cd docker-data/openclaw-bin
-if [ ! -f node_modules/openclaw/dist/index.js ]; then
-    npm init -y > /dev/null 2>&1
-    npm install openclaw@latest
-    echo "OpenClaw $(node -e "console.log(require('./node_modules/openclaw/package.json').version)") установлен"
+# OpenClaw форк с RBAC-патчами ядра (блокировка /status и др. для не-админов)
+echo "=== 2. Установка OpenClaw (форк с RBAC) ==="
+if [ ! -d docker-data/openclaw-fork/.git ]; then
+    git clone https://github.com/Kirill552/openclaw.git docker-data/openclaw-fork
+    cd docker-data/openclaw-fork
+    pnpm install && npm run build
+    echo "OpenClaw fork собран: $(node -e "console.log(require('./package.json').version)")"
+    cd ../..
 else
-    echo "OpenClaw уже установлен, пропускаю"
+    echo "OpenClaw fork уже склонирован, пропускаю"
+    echo "Для обновления: cd docker-data/openclaw-fork && git pull && pnpm install && npm run build"
 fi
-cd ../..
 
 # npm зависимости для расширений
 echo "=== 3. npm install для расширений ==="
@@ -67,3 +67,7 @@ echo "=== Готово! ==="
 echo "1. Заполни .env секретами: nano .env"
 echo "2. Запусти: docker compose up -d"
 echo "3. Проверь: docker compose logs -f"
+echo ""
+echo "=== Обновление форка ==="
+echo "cd docker-data/openclaw-fork && git pull && pnpm install && npm run build"
+echo "cd ../.. && docker compose up -d --force-recreate"
