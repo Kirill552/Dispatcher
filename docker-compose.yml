@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./site:/app:ro
-      - site-modules:/app/node_modules
+      - ./site/node_modules:/app/node_modules:ro
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -69,4 +69,3 @@ volumes:
   openclaw-data:
   openclaw-memory:
   openclaw-lancedb:
-  site-modules:

@@ -33,9 +33,9 @@ ln -sf ../package.json package.json 2>/dev/null || true
 npm install --omit=dev
 cd ..
 
-# npm зависимости для сайта
+# npm зависимости для сайта (tsx нужен для запуска — ставим все)
 echo "=== 3. npm install для сайта ==="
-cd site && npm install --omit=dev && cd ..
+cd site && npm install && cd ..
 
 echo "=== 4. .env файл ==="
 if [ ! -f .env ]; then
