@@ -10,8 +10,7 @@
       },
       "boardId": {
         "type": "string",
-        "description": "ATI board ID for cargo publishing",
-        "default": "a0a0a0a0a0a0a0a0a0a0a0a0"
+        "description": "ATI board ID for cargo publishing (optional, auto-fetched from API if not set)"
       },
       "monitorIntervalMs": {
         "type": "number",

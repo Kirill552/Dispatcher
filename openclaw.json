@@ -52,17 +52,29 @@
         "config": {
           "embedding": {
             "apiKey": "${OPENROUTER_API_KEY}",
-            "model": "text-embedding-3-small"
+            "model": "text-embedding-3-small",
+            "baseUrl": "https://openrouter.ai/api/v1"
           },
-          "autoCapture": true,
+          "autoCapture": false,
           "autoRecall": true
+        }
+      },
+      "tenant-memory": {
+        "enabled": true,
+        "config": {
+          "embeddingApiKey": "${OPENROUTER_API_KEY}",
+          "embeddingModel": "openai/text-embedding-3-small",
+          "embeddingBaseUrl": "https://openrouter.ai/api/v1",
+          "dataPath": "/home/node/.openclaw/tenant-memory",
+          "adminUserId": "408001372",
+          "maxRecallResults": 5
         }
       },
       "ati-cargo": {
         "enabled": true,
         "config": {
           "apiToken": "${ATI_API_TOKEN}",
-          "boardId": "a0a0a0a0a0a0a0a0a0a0a0a0",
+          "boardId": "",
           "monitorIntervalMs": 30000
         }
       },
@@ -83,7 +95,11 @@
                 "ati_create_cargo",
                 "ati_check_responses",
                 "ati_get_new_responses",
-                "memory_search"
+                "ati_carrier_info",
+                "memory_search",
+                "tenant_save",
+                "tenant_recall",
+                "analytics_log"
               ]
             }
           },
@@ -98,8 +114,8 @@
           "systemCommands": {
             "mode": "allowlist",
             "allowed": ["/start"],
-            "guestHelp": "Я диспетчер грузоперевозок. Напишите что и куда нужно перевезти, я найду перевозчика.",
-            "blockResponse": "Эта команда недоступна."
+            "guestHelp": "🚛 Я — диспетчер грузоперевозок по России!\n\n📦 Принимаю грузы от 200 кг\n🗺️ Межгород по всей России\n⏱ Подбор перевозчика за 15-30 минут\n\nПросто напишите что и куда нужно перевезти — или отправьте голосовое сообщение!",
+            "blockResponse": "🚛 Я — диспетчер грузоперевозок!\n\nЭта команда мне не знакома. Просто напишите что и куда нужно перевезти — я помогу найти перевозчика и рассчитать стоимость 📦"
           }
         }
       }

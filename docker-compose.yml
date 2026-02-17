@@ -16,6 +16,7 @@ services:
       - ./.agents/skills/dispatcher-admin/SKILL.md:/home/node/.openclaw/agents/skills/dispatcher-admin/SKILL.md:ro
       # Расширения
       - ./extensions/ati-cargo:/home/node/.openclaw/extensions/ati-cargo:ro
+      - ./extensions/tenant-memory:/home/node/.openclaw/extensions/tenant-memory:ro
       # RBAC берётся из форка (совместим с патчами ядра)
       # models.json
       - ./docker-data/models.json:/home/node/.openclaw/agents/main/agent/models.json:ro
@@ -28,6 +29,7 @@ services:
       - openclaw-data:/home/node/.openclaw/agents/main/sessions
       - openclaw-memory:/home/node/.openclaw/workspace
       - openclaw-lancedb:/home/node/.openclaw/memory-lancedb
+      - tenant-memory-data:/home/node/.openclaw/tenant-memory
     ports:
       - "127.0.0.1:18790:18790"
     environment:
@@ -88,3 +90,4 @@ volumes:
   openclaw-data:
   openclaw-memory:
   openclaw-lancedb:
+  tenant-memory-data:

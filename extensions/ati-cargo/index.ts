@@ -21,6 +21,10 @@ const activeCargos = new Map<string, TrackedCargo>();
 const seenResponseIds = new Set<string>();
 const pendingResponses: CarrierResponse[] = [];
 
+// Кэш boardId и contactId (заполняется при старте)
+let cachedBoardId: string | null = null;
+let cachedContactId: string | null = null;
+
 // Очистка грузов старше 48 часов
 function cleanupOldCargos() {
   const cutoff = Date.now() - 48 * 60 * 60 * 1000;
@@ -32,8 +36,9 @@ function cleanupOldCargos() {
 const plugin = {
   id: "ati-cargo",
   name: "ATI.su Cargo",
-  description: "ATI.su freight exchange integration: create cargos, check responses, search cities, monitor carrier offers",
-  version: "2.0.0",
+  description:
+    "ATI.su freight exchange integration: create cargos, check responses, search cities, manage loads, messenger, carrier info",
+  version: "3.0.0",
   configSchema: {
     type: "object" as const,
     properties: {
@@ -55,8 +60,58 @@ const plugin = {
       Authorization: `Bearer ${config.apiToken}`,
       "Content-Type": "application/json",
       Accept: "application/json",
-      "User-Agent": "openclaw-ati-cargo/2.0",
+      "User-Agent": "openclaw-ati-cargo/3.0",
     };
+
+    // --- initCache: авто-получение boardId и contactId при запуске ---
+    async function initCache() {
+      // boardId: получить первую доступную площадку
+      try {
+        const resp = await fetch(`${ATI_BASE}/v2/boards/public/boards/canAdd`, {
+          headers,
+        });
+        if (resp.ok) {
+          const boards: any[] = await resp.json();
+          const board = boards.find((b: any) => b.can_add);
+          if (board?.id) {
+            cachedBoardId = board.id;
+          }
+        }
+      } catch (err) {
+        api.logger.warn(`ati-cargo: failed to fetch boardId: ${err}`);
+      }
+
+      // Fallback на конфиг
+      if (!cachedBoardId && config.boardId) {
+        cachedBoardId = config.boardId;
+      }
+
+      // contactId: первый видимый контакт
+      try {
+        const resp = await fetch(`${ATI_BASE}/v1.0/firms/contacts`, { headers });
+        if (resp.ok) {
+          const contacts: any[] = await resp.json();
+          const contact = contacts.find(
+            (c: any) => c.is_visible && !c.is_deleted
+          );
+          if (contact?.id) {
+            cachedContactId = contact.id;
+          } else if (contacts[0]?.id) {
+            cachedContactId = contacts[0].id;
+          }
+        }
+      } catch (err) {
+        api.logger.warn(`ati-cargo: failed to fetch contactId: ${err}`);
+      }
+
+      api.logger.info(
+        `ati-cargo: cached boardId=${cachedBoardId} contactId=${cachedContactId}`
+      );
+    }
+
+    // ========================
+    // ИНСТРУМЕНТЫ: Поиск и создание
+    // ========================
 
     // --- Tool: ati_city_search ---
     api.registerTool({
@@ -65,19 +120,24 @@ const plugin = {
       description:
         "Search for a city ID on ATI.su by name. Use when the client mentions a city for loading or unloading.",
       parameters: Type.Object({
-        city_name: Type.String({ description: "City name in Russian, e.g. 'Сарапул'" }),
+        city_name: Type.String({
+          description: "City name in Russian, e.g. 'Сарапул'",
+        }),
       }),
       async execute(_toolCallId, params) {
-        const resp = await fetch(`${ATI_BASE}/gw/gis-dict/v1/autocomplete/suggestions`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            prefix: params.city_name,
-            suggestion_types: 1,
-            limit: 5,
-            country_id: 1,
-          }),
-        });
+        const resp = await fetch(
+          `${ATI_BASE}/gw/gis-dict/v1/autocomplete/suggestions`,
+          {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              prefix: params.city_name,
+              suggestion_types: 1,
+              limit: 5,
+              country_id: 1,
+            }),
+          }
+        );
         const data = await resp.json();
         const suggestions = data.suggestions || [];
         const results = suggestions.map((s: any) => ({
@@ -98,30 +158,52 @@ const plugin = {
       description:
         "Create a cargo listing on ATI.su freight exchange. Use after all order data is collected and confirmed by the client.",
       parameters: Type.Object({
-        loading_city_id: Type.Number({ description: "ATI city ID for loading point" }),
-        unloading_city_id: Type.Number({ description: "ATI city ID for unloading point" }),
-        cargo_description: Type.String({ description: "Cargo description, e.g. 'мебель'" }),
+        loading_city_id: Type.Number({
+          description: "ATI city ID for loading point",
+        }),
+        unloading_city_id: Type.Number({
+          description: "ATI city ID for unloading point",
+        }),
+        cargo_description: Type.String({
+          description: "Cargo description, e.g. 'мебель'",
+        }),
         weight: Type.Number({ description: "Weight in kilograms" }),
         volume: Type.Number({ description: "Volume in cubic meters" }),
         body_type_id: Type.Number({
-          description: "Body type: 200=tent, 300=reefer, 500=van, 1100=flatbed",
+          description:
+            "Body type: 200=tent, 300=reefer, 500=van, 1100=flatbed",
         }),
         loading_date: Type.String({ description: "Loading date YYYY-MM-DD" }),
         loading_type_id: Type.Optional(
-          Type.Number({ description: "Loading type: 1=top, 2=side, 4=rear. Default 2" })
+          Type.Number({
+            description: "Loading type: 1=top, 2=side, 4=rear. Default 2",
+          })
         ),
       }),
       async execute(_toolCallId, params) {
-        // Get contact ID
-        const contactResp = await fetch(`${ATI_BASE}/v1.0/firms/contacts`, { headers });
-        const contacts = await contactResp.json();
-        const contact =
-          contacts.find((c: any) => c.is_visible && !c.is_deleted) || contacts[0];
-        if (!contact) {
-          return { content: [{ type: "text", text: "Error: no ATI contact found" }] };
+        if (!cachedContactId) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: no ATI contact cached. Service may not have started.",
+              },
+            ],
+          };
         }
 
-        const boardId = config.boardId || "a0a0a0a0a0a0a0a0a0a0a0a0";
+        const boardId = cachedBoardId || config.boardId || "";
+        if (!boardId) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: no boardId available. Check config or API access.",
+              },
+            ],
+          };
+        }
+
         const loadDate = params.loading_date;
 
         const payload = {
@@ -129,7 +211,10 @@ const plugin = {
             external_id: `OC_${Date.now()}`,
             route: {
               loading: {
-                location: { type: "manual", city_id: params.loading_city_id },
+                location: {
+                  type: "manual",
+                  city_id: params.loading_city_id,
+                },
                 dates: {
                   type: "from-date",
                   first_date: `${loadDate}T00:00:00.000Z`,
@@ -146,7 +231,10 @@ const plugin = {
                 ],
               },
               unloading: {
-                location: { type: "manual", city_id: params.unloading_city_id },
+                location: {
+                  type: "manual",
+                  city_id: params.unloading_city_id,
+                },
               },
             },
             truck: {
@@ -181,7 +269,7 @@ const plugin = {
               },
             ],
             note: "",
-            contacts: [contact.id],
+            contacts: [cachedContactId],
           },
         };
 
@@ -194,9 +282,10 @@ const plugin = {
         if (resp.ok) {
           const result = await resp.json();
           const cargoApp = result.cargo_application || {};
-          const cargoId = String(cargoApp.cargo_application_id || cargoApp.cargo_id || "");
+          const cargoId = String(
+            cargoApp.cargo_application_id || cargoApp.cargo_id || ""
+          );
 
-          // Регистрируем груз для мониторинга
           if (cargoId) {
             activeCargos.set(cargoId, {
               cargoId,
@@ -241,19 +330,26 @@ const plugin = {
       parameters: Type.Object({
         cargo_id: Type.Optional(
           Type.String({
-            description: "Cargo ID to filter responses. If omitted, returns all.",
+            description:
+              "Cargo ID to filter responses. If omitted, returns all.",
           })
         ),
       }),
       async execute(_toolCallId, params) {
-        const resp = await fetch(`${ATI_BASE}/v1.0/loads/new/responses`, { headers });
+        const resp = await fetch(`${ATI_BASE}/v1.0/loads/new/responses`, {
+          headers,
+        });
         if (!resp.ok) {
-          return { content: [{ type: "text", text: `Error ${resp.status}` }] };
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}` }],
+          };
         }
 
         let responses = await resp.json();
         if (params.cargo_id) {
-          responses = responses.filter((r: any) => r.LoadId === params.cargo_id);
+          responses = responses.filter(
+            (r: any) => r.LoadId === params.cargo_id
+          );
         }
 
         const summary = responses.map((r: any) => ({
@@ -261,6 +357,7 @@ const plugin = {
           price: r.Price,
           firm_id: r.FirmId,
           load_id: r.LoadId,
+          response_id: String(r.ResponseId || r.Id || ""),
         }));
 
         return {
@@ -283,16 +380,20 @@ const plugin = {
       parameters: Type.Object({
         cargo_id: Type.Optional(
           Type.String({
-            description: "Filter by cargo ID. If omitted, returns all new responses.",
+            description:
+              "Filter by cargo ID. If omitted, returns all new responses.",
           })
         ),
       }),
       async execute(_toolCallId, params) {
         let results: CarrierResponse[];
         if (params.cargo_id) {
-          results = pendingResponses.filter((r) => r.loadId === params.cargo_id);
-          // Убираем выданные из очереди
-          const remaining = pendingResponses.filter((r) => r.loadId !== params.cargo_id);
+          results = pendingResponses.filter(
+            (r) => r.loadId === params.cargo_id
+          );
+          const remaining = pendingResponses.filter(
+            (r) => r.loadId !== params.cargo_id
+          );
           pendingResponses.length = 0;
           pendingResponses.push(...remaining);
         } else {
@@ -321,12 +422,435 @@ const plugin = {
       },
     });
 
-    // --- Service: ati-monitor ---
+    // ========================
+    // ИНСТРУМЕНТЫ: Управление грузами
+    // ========================
+
+    // --- Tool: ati_my_loads ---
+    api.registerTool({
+      name: "ati_my_loads",
+      label: "ATI My Loads",
+      description:
+        "List my active cargo listings on ATI.su. Use to see all current loads, their response counts, and statuses.",
+      parameters: Type.Object({}),
+      async execute() {
+        const resp = await fetch(`${ATI_BASE}/v1.0/loads`, { headers });
+        if (!resp.ok) {
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}` }],
+          };
+        }
+
+        const loads: any[] = await resp.json();
+        const summary = loads.map((l: any) => ({
+          id: l.Id,
+          load_number: l.LoadNumber,
+          loading_city: l.LoadingCity || l.Loading?.City,
+          unloading_city: l.UnloadingCity || l.Unloading?.City,
+          date: l.FirstDate || l.Loading?.FirstDate,
+          response_count: l.ResponseCount ?? 0,
+          offer_count: l.OfferCount ?? 0,
+          can_be_renewed: l.CanBeRenewed ?? false,
+        }));
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `${summary.length} active loads:\n${JSON.stringify(summary, null, 2)}`,
+            },
+          ],
+        };
+      },
+    });
+
+    // --- Tool: ati_renew_cargo ---
+    api.registerTool({
+      name: "ati_renew_cargo",
+      label: "ATI Renew Cargo",
+      description:
+        "Renew (bump) a cargo listing in ATI.su search results. Use to push a load higher in search when it has been active for a while.",
+      parameters: Type.Object({
+        load_id: Type.String({ description: "Load ID to renew" }),
+      }),
+      async execute(_toolCallId, params) {
+        const resp = await fetch(
+          `${ATI_BASE}/v1.0/loads/${params.load_id}/renew`,
+          {
+            method: "PUT",
+            headers,
+          }
+        );
+
+        if (resp.ok) {
+          const result = await resp.json();
+          const status = result.Status ?? result.status;
+          if (status === 0) {
+            return {
+              content: [
+                { type: "text", text: "Груз успешно обновлён в поиске." },
+              ],
+            };
+          } else if (status === 2) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: "Слишком рано для обновления. Попробуйте позже.",
+                },
+              ],
+            };
+          }
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Renew status: ${JSON.stringify(result)}`,
+              },
+            ],
+          };
+        } else {
+          const errText = await resp.text();
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}: ${errText}` }],
+          };
+        }
+      },
+    });
+
+    // --- Tool: ati_delete_cargo ---
+    api.registerTool({
+      name: "ati_delete_cargo",
+      label: "ATI Delete Cargo",
+      description:
+        "Delete (archive) a cargo listing from ATI.su. Use when a load is no longer needed.",
+      parameters: Type.Object({
+        load_id: Type.String({ description: "Load ID to delete" }),
+      }),
+      async execute(_toolCallId, params) {
+        const resp = await fetch(
+          `${ATI_BASE}/v1.0/loads/${params.load_id}`,
+          {
+            method: "DELETE",
+            headers,
+          }
+        );
+
+        if (resp.ok) {
+          activeCargos.delete(params.load_id);
+          return {
+            content: [{ type: "text", text: "Груз удалён с биржи." }],
+          };
+        } else {
+          const errText = await resp.text();
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}: ${errText}` }],
+          };
+        }
+      },
+    });
+
+    // --- Tool: ati_carrier_info ---
+    api.registerTool({
+      name: "ati_carrier_info",
+      label: "ATI Carrier Info",
+      description:
+        "Get information about a carrier on ATI.su: name, rating, claims, contacts. Use to evaluate a carrier before accepting their offer.",
+      parameters: Type.Object({
+        ati_id: Type.String({
+          description: "ATI firm ID (numeric string)",
+        }),
+      }),
+      async execute(_toolCallId, params) {
+        const resp = await fetch(
+          `${ATI_BASE}/v1.0/firms/${params.ati_id}/contacts/summary`,
+          { headers }
+        );
+
+        if (!resp.ok) {
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}` }],
+          };
+        }
+
+        const data = await resp.json();
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(data, null, 2),
+            },
+          ],
+        };
+      },
+    });
+
+    // ========================
+    // ИНСТРУМЕНТЫ: ATI Мессенджер
+    // ========================
+
+    // --- Tool: ati_create_chat ---
+    api.registerTool({
+      name: "ati_create_chat",
+      label: "ATI Create Chat",
+      description:
+        "Create a dialog with a carrier in ATI Messenger. Use to start communication with a carrier about a load. Between two users only one dialog exists — re-creating returns the existing one.",
+      parameters: Type.Object({
+        ati_id: Type.String({
+          description:
+            "ATI ID in format 'firm_code.contact_id', e.g. '777.0'",
+        }),
+        name: Type.Optional(
+          Type.String({ description: "Chat name, e.g. carrier firm name" })
+        ),
+        description: Type.Optional(
+          Type.String({ description: "Chat description, e.g. route info" })
+        ),
+      }),
+      async execute(_toolCallId, params) {
+        const resp = await fetch(`${ATI_BASE}/messenger/1.1/chats/`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            channel_type: "dialog",
+            name: params.name || "Диалог",
+            description: params.description || "",
+            ati_id: params.ati_id,
+          }),
+        });
+
+        if (!resp.ok) {
+          const errText = await resp.text();
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}: ${errText}` }],
+          };
+        }
+
+        const chat = await resp.json();
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                { chat_id: chat.id, name: chat.name },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      },
+    });
+
+    // --- Tool: ati_send_message ---
+    api.registerTool({
+      name: "ati_send_message",
+      label: "ATI Send Message",
+      description:
+        "Send a message in an ATI Messenger chat. Use to communicate with carriers about loads, negotiate prices, or confirm deals.",
+      parameters: Type.Object({
+        chat_id: Type.String({ description: "Chat ID from ati_create_chat" }),
+        text: Type.String({ description: "Message text to send" }),
+      }),
+      async execute(_toolCallId, params) {
+        // ATI Messenger v1.2 требует multipart/form-data
+        const boundary = `----OCBoundary${Date.now()}`;
+        const body = [
+          `--${boundary}`,
+          `Content-Disposition: form-data; name="text"`,
+          "",
+          params.text,
+          `--${boundary}--`,
+        ].join("\r\n");
+
+        const resp = await fetch(
+          `${ATI_BASE}/messenger/1.2/chats/${params.chat_id}/messages`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: headers.Authorization,
+              "Content-Type": `multipart/form-data; boundary=${boundary}`,
+              Accept: "application/json",
+              "User-Agent": headers["User-Agent"],
+            },
+            body,
+          }
+        );
+
+        if (!resp.ok) {
+          const errText = await resp.text();
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}: ${errText}` }],
+          };
+        }
+
+        const msg = await resp.json();
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                {
+                  message_id: msg.id,
+                  text: msg.text,
+                  delivered: msg.delivered ?? true,
+                },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      },
+    });
+
+    // --- Tool: ati_get_chat_history ---
+    api.registerTool({
+      name: "ati_get_chat_history",
+      label: "ATI Chat History",
+      description:
+        "Get message history from an ATI Messenger chat. Use to check what a carrier replied or to review conversation.",
+      parameters: Type.Object({
+        chat_id: Type.String({ description: "Chat ID" }),
+      }),
+      async execute(_toolCallId, params) {
+        const resp = await fetch(
+          `${ATI_BASE}/messenger/1.1/chats/${params.chat_id}/history/`,
+          { headers }
+        );
+
+        if (!resp.ok) {
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}` }],
+          };
+        }
+
+        const messages: any[] = await resp.json();
+        const summary = messages.map((m: any) => ({
+          text: m.text,
+          from: m.from || m.user,
+          ts: m.ts || m.timestamp,
+        }));
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `${summary.length} messages:\n${JSON.stringify(summary, null, 2)}`,
+            },
+          ],
+        };
+      },
+    });
+
+    // --- Tool: ati_get_chats ---
+    api.registerTool({
+      name: "ati_get_chats",
+      label: "ATI Get Chats",
+      description:
+        "List all ATI Messenger subscriptions/chats. Use to see active conversations with carriers.",
+      parameters: Type.Object({}),
+      async execute() {
+        const resp = await fetch(`${ATI_BASE}/messenger/1.2/subscriptions/`, {
+          headers,
+        });
+
+        if (!resp.ok) {
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}` }],
+          };
+        }
+
+        const subs: any[] = await resp.json();
+        const summary = subs.map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          partner: s.partner,
+          unread: s.unread ?? 0,
+          last_message: s.tail?.text || null,
+        }));
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `${summary.length} chats:\n${JSON.stringify(summary, null, 2)}`,
+            },
+          ],
+        };
+      },
+    });
+
+    // ========================
+    // ИНСТРУМЕНТЫ: Приглашение перевозчика
+    // ========================
+
+    // --- Tool: ati_invite_carrier ---
+    api.registerTool({
+      name: "ati_invite_carrier",
+      label: "ATI Invite Carrier",
+      description:
+        "Invite a carrier by sending a counter offer. Use after agreeing on terms with a carrier to formalize the deal on ATI.su.",
+      parameters: Type.Object({
+        load_id: Type.String({ description: "Load ID" }),
+        response_id: Type.String({ description: "Carrier response ID" }),
+        rate_type: Type.Optional(
+          Type.Number({
+            description:
+              "Payment type: 0=cash, 1=non-cash with VAT, 2=non-cash without VAT. Default 0",
+          })
+        ),
+      }),
+      async execute(_toolCallId, params) {
+        const rateType = params.rate_type ?? 0;
+
+        const resp = await fetch(
+          `${ATI_BASE}/v1.2/orders/invites/counter_offer`,
+          {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              load_id: params.load_id,
+              response_id: params.response_id,
+              rate_types: [rateType],
+              cancel_after_in_minutes: 4320,
+              is_auto: false,
+              need_archive_on_invite: false,
+            }),
+          }
+        );
+
+        if (resp.ok) {
+          const result = await resp.json();
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Приглашение отправлено.\n${JSON.stringify(result, null, 2)}`,
+              },
+            ],
+          };
+        } else {
+          const errText = await resp.text();
+          return {
+            content: [{ type: "text", text: `Error ${resp.status}: ${errText}` }],
+          };
+        }
+      },
+    });
+
+    // ========================
+    // СЕРВИС: Мониторинг откликов
+    // ========================
+
     let monitorTimer: ReturnType<typeof setInterval> | null = null;
 
     api.registerService({
       id: "ati-monitor",
       async start() {
+        // Инициализируем кэш до начала поллинга
+        await initCache();
+
         const interval = config.monitorIntervalMs || 30000;
         api.logger.info(`ati-monitor: starting, poll every ${interval}ms`);
 
@@ -336,7 +860,9 @@ const plugin = {
           cleanupOldCargos();
 
           try {
-            const resp = await fetch(`${ATI_BASE}/v1.0/loads/new/responses`, { headers });
+            const resp = await fetch(`${ATI_BASE}/v1.0/loads/new/responses`, {
+              headers,
+            });
             if (!resp.ok) {
               api.logger.warn(`ati-monitor: poll failed ${resp.status}`);
               return;
@@ -346,12 +872,12 @@ const plugin = {
             let newCount = 0;
 
             for (const r of responses) {
-              const responseId = String(r.ResponseId || r.Id || `${r.FirmId}_${r.LoadId}`);
+              const responseId = String(
+                r.ResponseId || r.Id || `${r.FirmId}_${r.LoadId}`
+              );
               const loadId = String(r.LoadId || "");
 
-              // Только отклики на наши грузы
               if (!activeCargos.has(loadId)) continue;
-              // Только новые отклики
               if (seenResponseIds.has(responseId)) continue;
 
               seenResponseIds.add(responseId);
@@ -374,7 +900,6 @@ const plugin = {
           }
         }
 
-        // Первый поллинг сразу
         await poll();
         monitorTimer = setInterval(poll, interval);
       },

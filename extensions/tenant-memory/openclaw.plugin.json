@@ -1,0 +1,38 @@
+{
+  "id": "tenant-memory",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "embeddingApiKey": {
+        "type": "string",
+        "description": "API key for embedding provider (OpenRouter)"
+      },
+      "embeddingModel": {
+        "type": "string",
+        "description": "Embedding model name",
+        "default": "openai/text-embedding-3-small"
+      },
+      "embeddingBaseUrl": {
+        "type": "string",
+        "description": "Base URL for embedding API",
+        "default": "https://openrouter.ai/api/v1"
+      },
+      "dataPath": {
+        "type": "string",
+        "description": "Path for LanceDB storage",
+        "default": "/home/node/.openclaw/tenant-memory"
+      },
+      "adminUserId": {
+        "type": "string",
+        "description": "Admin Telegram user ID (full access to all tables)"
+      },
+      "maxRecallResults": {
+        "type": "number",
+        "description": "Max results per recall query",
+        "default": 5
+      }
+    },
+    "required": ["embeddingApiKey", "adminUserId"]
+  }
+}
