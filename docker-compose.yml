@@ -41,6 +41,7 @@ services:
     tmpfs:
       - /tmp
       - /home/node/.npm:uid=1000,gid=1000
+      - /home/node/.openclaw/identity:uid=1000,gid=1000
       - /home/node/.openclaw/canvas:uid=1000,gid=1000
       - /home/node/.openclaw/cron:uid=1000,gid=1000
       - /home/node/.openclaw/logs:uid=1000,gid=1000
