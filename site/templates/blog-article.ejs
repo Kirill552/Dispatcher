@@ -1,0 +1,40 @@
+<%- include('partials/head', {
+  title: article.title,
+  description: article.description || '',
+  canonical: '/blog/' + article.slug,
+  keywords: (article.keywords || []).join(', ')
+}) %>
+<%- include('partials/nav', { currentPage: 'blog' }) %>
+
+<article class="article">
+  <a href="/blog" class="article__back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Все статьи
+  </a>
+
+  <div class="article__meta">
+    <% if (article.date) { %><span><%= article.date %></span><% } %>
+    <% if (article.keywords && article.keywords.length) { %>
+      <span>&middot;</span>
+      <span><%= article.keywords.slice(0, 3).join(', ') %></span>
+    <% } %>
+  </div>
+
+  <h1><%= article.title %></h1>
+
+  <div class="article__content">
+    <%- article.html %>
+  </div>
+</article>
+
+<!-- CTA after article -->
+<section class="section cta-section">
+  <div class="container">
+    <h2>Нужна грузоперевозка?</h2>
+    <p class="lead">Напишите диспетчеру — рассчитаем стоимость за 2 минуты.</p>
+    <a href="https://t.me/ai_dispatcher_bot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Написать в Telegram</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/chat-widget') %>

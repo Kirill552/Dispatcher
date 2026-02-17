@@ -1,0 +1,119 @@
+<%- include('partials/head', {
+  title: 'О компании',
+  description: 'Транспортная компания «Диспетчер» — грузоперевозки по России. 10 лет опыта, 500+ проверенных перевозчиков, полное сопровождение.',
+  canonical: '/o-kompanii',
+  keywords: 'транспортная компания, грузоперевозки Россия, диспетчер грузоперевозок'
+}) %>
+<%- include('partials/nav', { currentPage: 'o-kompanii' }) %>
+
+<div class="page-header">
+  <div class="container">
+    <h1 class="reveal">О компании</h1>
+    <p class="lead reveal reveal--delay-1">Мы — команда диспетчеров-логистов с 10-летним опытом в грузоперевозках по России.</p>
+  </div>
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</div>
+
+<!-- О нас -->
+<section class="section">
+  <div class="container">
+    <div class="grid grid--2" style="gap: var(--sp-3xl); align-items: center;">
+      <div class="reveal">
+        <span class="section__label">Наша история</span>
+        <h2>Грузоперевозки — наше дело</h2>
+        <p style="margin-top: var(--sp-lg); color: var(--c-gray-700); line-height: 1.8;">
+          Мы начинали как небольшая диспетчерская служба, помогая малому бизнесу перевозить грузы между городами.
+          За 10 лет работы собрали базу из более чем 500 проверенных перевозчиков по всей России.
+        </p>
+        <p style="color: var(--c-gray-700); line-height: 1.8;">
+          Каждый перевозчик в нашей базе прошёл проверку: рейтинг, документы, история перевозок.
+          Мы не работаем с ненадёжными компаниями — ваш груз в безопасности.
+        </p>
+        <p style="color: var(--c-gray-700); line-height: 1.8;">
+          Сегодня мы обслуживаем десятки клиентов ежедневно. От мебельных фабрик до продуктовых компаний.
+          Нас выбирают за скорость, честные цены и персональный подход.
+        </p>
+      </div>
+
+      <div class="reveal reveal--delay-1">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-lg);">
+          <div class="counter" style="background: var(--c-navy-50); border-color: var(--c-navy-100); padding: var(--sp-xl);">
+            <span class="counter__value" data-target="500" style="color: var(--c-navy-700);">0</span><span class="counter__suffix" style="color: var(--c-accent);">+</span>
+            <span class="counter__label" style="color: var(--c-gray-500);">перевозчиков</span>
+          </div>
+          <div class="counter" style="background: var(--c-navy-50); border-color: var(--c-navy-100); padding: var(--sp-xl);">
+            <span class="counter__value" data-target="10" style="color: var(--c-navy-700);">0</span><span class="counter__suffix" style="color: var(--c-accent);"> лет</span>
+            <span class="counter__label" style="color: var(--c-gray-500);">опыта</span>
+          </div>
+          <div class="counter" style="background: var(--c-navy-50); border-color: var(--c-navy-100); padding: var(--sp-xl);">
+            <span class="counter__value" data-target="50" style="color: var(--c-navy-700);">0</span><span class="counter__suffix" style="color: var(--c-accent);">+</span>
+            <span class="counter__label" style="color: var(--c-gray-500);">городов</span>
+          </div>
+          <div class="counter" style="background: var(--c-navy-50); border-color: var(--c-navy-100); padding: var(--sp-xl);">
+            <span class="counter__value" data-target="24" style="color: var(--c-navy-700);">0</span><span class="counter__suffix" style="color: var(--c-accent);">/7</span>
+            <span class="counter__label" style="color: var(--c-gray-500);">на связи</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Принципы -->
+<section class="section section--dark" style="position: relative;">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label" style="color: var(--c-orange-400);">Принципы</span>
+      <h2>Как мы работаем</h2>
+    </div>
+
+    <div class="usp-grid">
+      <div class="usp reveal reveal--delay-1">
+        <div class="usp__icon">🎯</div>
+        <div>
+          <div class="usp__title">Только проверенные</div>
+          <p class="usp__desc">Каждый перевозчик проходит проверку документов и рейтинга. Не работаем с новичками без истории.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-2">
+        <div class="usp__icon">💬</div>
+        <div>
+          <div class="usp__title">Живое общение</div>
+          <p class="usp__desc">Никаких автоответчиков. Диспетчер-логист с опытом лично ведёт ваш заказ от начала до конца.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-3">
+        <div class="usp__icon">🤝</div>
+        <div>
+          <div class="usp__title">Помним каждого</div>
+          <p class="usp__desc">Запоминаем ваши маршруты и предпочтения. Постоянным клиентам — быстрее, удобнее, выгоднее.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wave-divider" style="position: absolute; bottom: -1px; left: 0; right: 0;">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="container">
+    <h2 class="reveal">Готовы работать вместе?</h2>
+    <p class="lead reveal reveal--delay-1">Напишите нам — расскажем подробнее и рассчитаем первый заказ бесплатно.</p>
+    <div class="reveal reveal--delay-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://t.me/ai_dispatcher_bot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Связаться</a>
+      <a href="/kontakty" class="btn btn--outline-light btn--lg">Контакты</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/chat-widget') %>

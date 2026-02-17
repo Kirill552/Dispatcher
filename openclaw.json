@@ -1,0 +1,108 @@
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/minimax/minimax-m2.5"
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "open",
+      "streamMode": "block"
+    },
+    "webchat": {
+      "enabled": true,
+      "dmPolicy": "open",
+      "streamMode": "stream",
+      "cors": {
+        "origins": ["https://ai-dispatcher.ru"]
+      }
+    }
+  },
+  "commands": {
+    "allowFrom": ["408001372"]
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "gateway": {
+    "bind": "loopback",
+    "port": 18790,
+    "auth": {
+      "mode": "token",
+      "token": "GENERATE_WITH_openssl_rand_-hex_32"
+    }
+  },
+  "tools": {
+    "exec": {
+      "security": "deny"
+    }
+  },
+  "skills": {
+    "load": {
+      "extraDirs": [".agents/skills"]
+    },
+    "entries": {
+      "dispatcher-client": { "enabled": true },
+      "dispatcher-admin": { "enabled": true },
+      "clawhub": { "enabled": false }
+    }
+  },
+  "plugins": {
+    "slots": { "memory": "memory-lancedb" },
+    "entries": {
+      "memory-lancedb": {
+        "enabled": true,
+        "config": {
+          "embedding": {
+            "apiKey": "${OPENROUTER_API_KEY}",
+            "model": "text-embedding-3-small"
+          },
+          "autoCapture": true,
+          "autoRecall": true
+        }
+      },
+      "ati-cargo": {
+        "enabled": true,
+        "config": {
+          "apiToken": "${ATI_API_TOKEN}",
+          "boardId": "a0a0a0a0a0a0a0a0a0a0a0a0",
+          "monitorIntervalMs": 30000
+        }
+      },
+      "rbac": {
+        "enabled": true,
+        "config": {
+          "roles": {
+            "admin": {
+              "users": ["408001372"],
+              "channels": "*",
+              "tools": "*"
+            },
+            "guest": {
+              "users": "*",
+              "channels": "*",
+              "tools": [
+                "ati_city_search",
+                "ati_create_cargo",
+                "ati_check_responses",
+                "ati_get_new_responses",
+                "memory_search"
+              ]
+            }
+          },
+          "defaultRole": "guest",
+          "logBlocked": true,
+          "logAllowed": false,
+          "failSafe": "deny",
+          "rateLimit": {
+            "maxBlockedPerMinute": 30,
+            "action": "suppress-logs"
+          }
+        }
+      }
+    }
+  }
+}

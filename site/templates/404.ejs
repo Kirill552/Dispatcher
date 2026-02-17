@@ -1,0 +1,21 @@
+<%- include('partials/head', {
+  title: 'Страница не найдена',
+  description: 'Запрашиваемая страница не существует.',
+  canonical: '/'
+}) %>
+<%- include('partials/nav', { currentPage: '' }) %>
+
+<section style="min-height: 60vh; display: flex; align-items: center; justify-content: center; padding-top: var(--nav-height);">
+  <div class="container" style="text-align: center;">
+    <h1 style="font-size: clamp(4rem, 10vw, 8rem); color: var(--c-gray-200); line-height: 1;">404</h1>
+    <h2 style="margin-top: var(--sp-md); margin-bottom: var(--sp-md);">Страница не найдена</h2>
+    <p class="text-secondary" style="margin-bottom: var(--sp-2xl);">Возможно, страница была перемещена или удалена.</p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="/" class="btn btn--primary">На главную</a>
+      <a href="/blog" class="btn btn--outline">Блог</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/chat-widget') %>

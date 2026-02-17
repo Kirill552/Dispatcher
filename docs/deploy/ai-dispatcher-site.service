@@ -1,0 +1,16 @@
+[Unit]
+Description=AI Dispatcher Website (Fastify)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ai_dispetcher/ai-dispatcher-site
+ExecStart=/usr/bin/npx tsx server.ts
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=DOMAIN=https://ai-dispatcher.ru
+
+[Install]
+WantedBy=default.target

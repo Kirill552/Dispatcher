@@ -1,0 +1,9 @@
+{
+  "name": "dispatcher-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenClaw AI dispatcher for freight logistics",
+  "dependencies": {
+    "@sinclair/typebox": "^0.32.0"
+  }
+}

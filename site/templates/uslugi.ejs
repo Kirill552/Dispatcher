@@ -1,0 +1,90 @@
+<%- include('partials/head', {
+  title: 'Услуги — виды грузоперевозок',
+  description: 'Межгородние грузоперевозки по России: тентованные, рефрижераторы, фургоны, бортовые, контейнерные. От 200 кг, 500+ перевозчиков.',
+  canonical: '/uslugi',
+  keywords: 'грузоперевозки межгород, тентованные перевозки, рефрижератор, фургон, бортовой, контейнер'
+}) %>
+<%- include('partials/nav', { currentPage: 'uslugi' }) %>
+
+<div class="page-header">
+  <div class="container">
+    <h1 class="reveal">Услуги</h1>
+    <p class="lead reveal reveal--delay-1">Подберём транспорт под любой груз — от мебели до стройматериалов. Только межгород, только от 200 кг.</p>
+  </div>
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Типы кузовов -->
+<section class="section" id="mezhgorod">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Транспорт</span>
+      <h2>Типы кузовов</h2>
+      <p class="lead">Не знаете какой кузов нужен? Напишите нам — диспетчер подберёт оптимальный вариант по описанию груза.</p>
+    </div>
+
+    <div class="grid grid--2" style="gap: var(--sp-2xl);">
+      <div class="service-card reveal" id="tent">
+        <div class="service-card__icon">🚛</div>
+        <h3 class="service-card__title">Тентованный</h3>
+        <p class="service-card__desc">Самый универсальный тип кузова. Подходит для большинства грузов: товары народного потребления, оборудование, стройматериалы, паллеты.</p>
+        <ul style="margin-top: var(--sp-md); color: var(--c-gray-500); font-size: var(--fs-small);">
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Загрузка: сверху, сбоку, сзади</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Грузоподъёмность: до 20 тонн</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg);">Объём: до 120 м³</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal reveal--delay-1" id="ref">
+        <div class="service-card__icon">❄️</div>
+        <h3 class="service-card__title">Рефрижератор</h3>
+        <p class="service-card__desc">Термоконтролируемые перевозки для продуктов питания, фармацевтики, цветов и других температурных грузов.</p>
+        <ul style="margin-top: var(--sp-md); color: var(--c-gray-500); font-size: var(--fs-small);">
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Температурный режим: от -20°C до +12°C</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Грузоподъёмность: до 20 тонн</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg);">Мониторинг температуры</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal" id="furgon">
+        <div class="service-card__icon">📦</div>
+        <h3 class="service-card__title">Фургон</h3>
+        <p class="service-card__desc">Закрытый цельнометаллический кузов для ценных и хрупких грузов: мебель, бытовая техника, электроника, одежда.</p>
+        <ul style="margin-top: var(--sp-md); color: var(--c-gray-500); font-size: var(--fs-small);">
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Максимальная защита от повреждений</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Грузоподъёмность: до 10 тонн</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg);">Загрузка: задняя</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal reveal--delay-1" id="bort">
+        <div class="service-card__icon">🏗️</div>
+        <h3 class="service-card__title">Бортовой</h3>
+        <p class="service-card__desc">Открытая площадка для негабаритных и длинномерных грузов: металлоконструкции, трубы, пиломатериалы, ЖБИ.</p>
+        <ul style="margin-top: var(--sp-md); color: var(--c-gray-500); font-size: var(--fs-small);">
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Загрузка: краном сверху, с боков</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Грузоподъёмность: до 25 тонн</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg);">Подходит для негабарита</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="container">
+    <h2 class="reveal">Не уверены в типе кузова?</h2>
+    <p class="lead reveal reveal--delay-1">Опишите груз — диспетчер подберёт оптимальный транспорт и рассчитает стоимость.</p>
+    <div class="reveal reveal--delay-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://t.me/ai_dispatcher_bot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Написать в Telegram</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/chat-widget') %>

@@ -1,0 +1,122 @@
+{
+  "description": "ATI API v2 - Структура для создания груза /v2/cargos",
+  "url": "https://api.ati.su/v2/cargos",
+  "method": "POST",
+  "headers": {
+    "Authorization": "Bearer {token}",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "cargo_application": {
+      "external_id": "AI_1750611052",
+      "route": {
+        "loading": {
+          "location": {
+            "type": "manual",
+            "city_id": 120,
+            "address": "ул. Примерная, 1"
+          },
+          "dates": {
+            "type": "from-date",
+            "first_date": "2025-06-25T00:00:00.000Z",
+            "last_date": "2025-06-29T23:59:59.000Z",
+            "time": {
+              "type": "bounded",
+              "start": "09:00",
+              "end": "18:00",
+              "offset": "+03:00"
+            }
+          },
+          "cargos": [{
+            "id": 1,
+            "name": "Стройматериалы, 1000 кг",
+            "weight": {
+              "type": "kilos",
+              "quantity": 1000
+            },
+            "volume": {
+              "quantity": 2.3
+            },
+            "sizes": {
+              "length": {"value": 4.0},
+              "width": {"value": 2.0},
+              "height": {"value": 1.0}
+            }
+          }]
+        },
+        "unloading": {
+          "location": {
+            "type": "manual",
+            "city_id": 240,
+            "address": ""
+          }
+        }
+      },
+      "truck": {
+        "trucks_count": 1,
+        "load_type": "ftl",
+        "body_types": [1100],
+        "body_loading": {
+          "types": [2],
+          "is_all_required": false
+        },
+        "body_unloading": {
+          "types": [1],
+          "is_all_required": false
+        }
+      },
+      "payment": {
+        "type": "rate-request",
+        "currency_type": 1,
+        "hide_counter_offers": false,
+        "direct_offer": false,
+        "cash_available": true,
+        "rate_with_nds_available": true,
+        "rate_without_nds_available": true
+      },
+      "boards": [{
+        "id": "a0a0a0a0a0a0a0a0a0a0a0a0",
+        "publication_mode": "now",
+        "publication_time": "1970-01-01T00:00:00.000Z",
+        "cancel_publish_on_auction_bet": false,
+        "reservation_enabled": false
+      }],
+      "note": "Груз: Стройматериалы. Требуется надежная перевозка.",
+      "contacts": [0]
+    }
+  },
+  "date_types": {
+    "from-date": "в промежутке дат (диапазон) или конкретная дата",
+    "permanent": "постоянно",
+    "rate-request": "груза нет, запрос ставки"
+  },
+  "loading_types": {
+    "1": "боковая",
+    "2": "задняя",
+    "4": "верхняя",
+    "8": "полная растентовка",
+    "16": "без растентовки"
+  },
+  "unloading_types": {
+    "1": "боковая",
+    "2": "задняя", 
+    "4": "верхняя",
+    "8": "полная растентовка",
+    "16": "без растентовки"
+  },
+  "body_types": {
+    "1": "тентованный",
+    "2": "контейнер",
+    "4": "рефрижератор",
+    "16": "фургон",
+    "128": "бортовой",
+    "1100": "платформа",
+    "4096": "самосвал"
+  },
+  "payment_types": {
+    "rate-request": "запрос ставки",
+    "with-bargaining": "возможен торг",
+    "without-bargaining": "без торга",
+    "auction": "торги"
+  }
+} 

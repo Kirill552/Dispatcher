@@ -1,0 +1,34 @@
+<body>
+<nav class="nav" role="navigation" aria-label="Основная навигация">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo" aria-label="Диспетчер — на главную">
+      <div class="nav__logo-icon">Д</div>
+      Диспетчер
+    </a>
+
+    <div class="nav__links">
+      <a href="/" class="nav__link<%= typeof currentPage !== 'undefined' && currentPage === 'index' ? ' nav__link--active' : '' %>">Главная</a>
+      <a href="/uslugi" class="nav__link<%= typeof currentPage !== 'undefined' && currentPage === 'uslugi' ? ' nav__link--active' : '' %>">Услуги</a>
+      <a href="/o-kompanii" class="nav__link<%= typeof currentPage !== 'undefined' && currentPage === 'o-kompanii' ? ' nav__link--active' : '' %>">О компании</a>
+      <a href="/blog" class="nav__link<%= typeof currentPage !== 'undefined' && currentPage === 'blog' ? ' nav__link--active' : '' %>">Блог</a>
+      <a href="/kontakty" class="nav__link<%= typeof currentPage !== 'undefined' && currentPage === 'kontakty' ? ' nav__link--active' : '' %>">Контакты</a>
+    </div>
+
+    <a href="#quote" class="btn btn--accent btn--sm nav__cta">Рассчитать</a>
+
+    <button class="nav__burger" aria-label="Меню" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav__mobile" aria-hidden="true">
+  <a href="/" class="nav__link">Главная</a>
+  <a href="/uslugi" class="nav__link">Услуги</a>
+  <a href="/o-kompanii" class="nav__link">О компании</a>
+  <a href="/blog" class="nav__link">Блог</a>
+  <a href="/kontakty" class="nav__link">Контакты</a>
+  <a href="#quote" class="btn btn--accent btn--full" style="margin-top: auto;">Рассчитать стоимость</a>
+</div>

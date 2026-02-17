@@ -1,0 +1,125 @@
+{
+  "id": "rbac",
+  "configSchema": {
+    "type": "object",
+    "required": ["roles"],
+    "additionalProperties": false,
+    "properties": {
+      "roles": {
+        "type": "object",
+        "description": "Role definitions. Checked top-to-bottom, first match wins. Wildcard roles (users: \"*\") must come AFTER specific-user roles.",
+        "minProperties": 1,
+        "additionalProperties": {
+          "type": "object",
+          "required": ["users", "tools"],
+          "additionalProperties": false,
+          "properties": {
+            "users": {
+              "oneOf": [
+                { "type": "string", "const": "*" },
+                { "type": "array", "items": { "type": "string" } }
+              ],
+              "description": "User IDs or \"*\" for everyone"
+            },
+            "channels": {
+              "oneOf": [
+                { "type": "string", "const": "*" },
+                { "type": "array", "items": { "type": "string" } }
+              ],
+              "description": "Channel names this role applies to, or \"*\" for all. Default: \"*\"",
+              "default": "*"
+            },
+            "tools": {
+              "oneOf": [
+                { "type": "string", "const": "*" },
+                { "type": "array", "items": { "type": "string" } }
+              ],
+              "description": "Allowed tool names, wildcards (exec_*), @group refs, or \"*\" for all"
+            }
+          }
+        }
+      },
+      "toolGroups": {
+        "type": "object",
+        "description": "Named tool sets. Reference in roles as @group_name.",
+        "additionalProperties": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "default": {}
+      },
+      "defaultRole": {
+        "type": "string",
+        "description": "Fallback role when no role matches the user",
+        "default": "guest"
+      },
+      "logBlocked": {
+        "type": "boolean",
+        "description": "Log blocked tool calls",
+        "default": true
+      },
+      "logAllowed": {
+        "type": "boolean",
+        "description": "Log allowed tool calls (audit trail)",
+        "default": false
+      },
+      "failSafe": {
+        "type": "string",
+        "enum": ["deny", "allow"],
+        "description": "Action when sessionKey cannot be parsed. Default: deny (secure).",
+        "default": "deny"
+      },
+      "rateLimit": {
+        "type": "object",
+        "description": "Rate limiting for blocked-call log suppression",
+        "additionalProperties": false,
+        "properties": {
+          "maxBlockedPerMinute": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Max blocked calls logged per peer per minute",
+            "default": 30
+          },
+          "action": {
+            "type": "string",
+            "enum": ["suppress-logs"],
+            "description": "What to do when rate limit exceeded",
+            "default": "suppress-logs"
+          }
+        }
+      },
+      "systemCommands": {
+        "type": "object",
+        "description": "Block OpenClaw system commands for non-admin users. Two modes: 'blocklist' (block specific commands) or 'allowlist' (block ALL /commands except listed). Allowlist is recommended — blocks /status, /config, /debug, /exec, etc. automatically.",
+        "required": ["blockResponse"],
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": ["blocklist", "allowlist"],
+            "description": "blocklist = block only 'blocked' commands. allowlist = block ALL /commands except 'allowed'. Default: blocklist.",
+            "default": "blocklist"
+          },
+          "blocked": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Commands to block (blocklist mode). Required when mode=blocklist."
+          },
+          "allowed": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Commands guests CAN use (allowlist mode). Everything else is blocked. Required when mode=allowlist."
+          },
+          "guestHelp": {
+            "type": "string",
+            "description": "Custom /help response for non-admin users. If set, /help is always intercepted (both modes)."
+          },
+          "blockResponse": {
+            "type": "string",
+            "description": "Generic response shown when a non-admin tries a blocked command"
+          }
+        }
+      }
+    }
+  }
+}

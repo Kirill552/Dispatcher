@@ -1,0 +1,345 @@
+<%- include('partials/head', {
+  title: 'Грузоперевозки по России',
+  description: 'Грузоперевозки по России от 200 кг. Расчёт стоимости за 2 минуты. 500+ проверенных перевозчиков. Полное сопровождение сделки.',
+  canonical: '/',
+  keywords: 'грузоперевозки, грузоперевозки по России, межгород, стоимость грузоперевозок, транспортная компания'
+}) %>
+<%- include('partials/nav', { currentPage: 'index' }) %>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="container hero__content">
+    <div class="hero__text">
+      <h1 class="hero__title">
+        Грузоперевозки<br>по <span>России</span>
+      </h1>
+      <p class="hero__subtitle">
+        Расчёт стоимости за 2 минуты. Более 500 проверенных перевозчиков.
+        Полное сопровождение от заявки до доставки.
+      </p>
+      <div class="hero__actions">
+        <a href="https://t.me/ai_dispatcher_bot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">
+          <svg class="btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          Написать в Telegram
+        </a>
+        <a href="#how" class="btn btn--outline-light btn--lg">Как это работает</a>
+      </div>
+    </div>
+
+    <div class="quote-form" id="quote">
+      <h3 class="quote-form__title">Быстрый расчёт</h3>
+      <p class="quote-form__subtitle">Заполните форму — диспетчер ответит за 2 минуты</p>
+      <form>
+        <div class="form-group">
+          <label for="from">Откуда</label>
+          <input type="text" id="from" name="from" placeholder="Город отправления" required>
+        </div>
+        <div class="form-group">
+          <label for="to">Куда</label>
+          <input type="text" id="to" name="to" placeholder="Город доставки" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="weight">Вес, кг</label>
+            <input type="number" id="weight" name="weight" placeholder="от 200" min="200">
+          </div>
+          <div class="form-group">
+            <label for="date">Дата загрузки</label>
+            <input type="date" id="date" name="date">
+          </div>
+        </div>
+        <button type="submit" class="btn btn--accent btn--full btn--lg">Рассчитать стоимость</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="hero__counters">
+    <div class="container">
+      <div class="counters">
+        <div class="counter">
+          <span class="counter__value" data-target="500">0</span><span class="counter__suffix">+</span>
+          <span class="counter__label">перевозчиков</span>
+        </div>
+        <div class="counter">
+          <span class="counter__value" data-target="10">0</span><span class="counter__suffix"> лет</span>
+          <span class="counter__label">на рынке</span>
+        </div>
+        <div class="counter">
+          <span class="counter__value" data-target="50">0</span><span class="counter__suffix">+</span>
+          <span class="counter__label">городов</span>
+        </div>
+        <div class="counter">
+          <span class="counter__value" data-target="24">0</span><span class="counter__suffix">/7</span>
+          <span class="counter__label">на связи</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__wave">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,80 C240,120 480,40 720,80 C960,120 1200,40 1440,80 L1440,120 L0,120 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ КАК ЭТО РАБОТАЕТ ============ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Процесс</span>
+      <h2>Как это работает</h2>
+      <p class="lead">От заявки до доставки — 4 простых шага. Мы берём всю логистику на себя.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal reveal--delay-1">
+        <div class="step__number">1</div>
+        <h4 class="step__title">Оставляете заявку</h4>
+        <p class="step__desc">Напишите что, откуда и куда нужно перевезти. В чате, по телефону или через форму на сайте.</p>
+      </div>
+      <div class="step reveal reveal--delay-2">
+        <div class="step__number">2</div>
+        <h4 class="step__title">Подбираем перевозчика</h4>
+        <p class="step__desc">Диспетчер находит лучшие предложения среди 500+ проверенных перевозчиков за 15-30 минут.</p>
+      </div>
+      <div class="step reveal reveal--delay-3">
+        <div class="step__number">3</div>
+        <h4 class="step__title">Согласовываете условия</h4>
+        <p class="step__desc">Предлагаем 2-3 варианта с ценой и сроками. Выбираете подходящий — бронируем машину.</p>
+      </div>
+      <div class="step reveal reveal--delay-4">
+        <div class="step__number">4</div>
+        <h4 class="step__title">Груз доставлен</h4>
+        <p class="step__desc">Контролируем перевозку от загрузки до выгрузки. Уведомляем о статусе на каждом этапе.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ УСЛУГИ ============ -->
+<section class="section section--alt" id="services">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Услуги</span>
+      <h2>Виды перевозок</h2>
+      <p class="lead">Межгородние грузоперевозки от 200 кг по всей России. Подберём транспорт под любой груз.</p>
+    </div>
+
+    <div class="grid grid--3">
+      <div class="service-card reveal reveal--delay-1">
+        <div class="service-card__icon">🚛</div>
+        <h4 class="service-card__title">Тентованные</h4>
+        <p class="service-card__desc">Универсальный вариант для большинства грузов. Защита от осадков, загрузка сверху и сбоку. От 1 до 20 тонн.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-2">
+        <div class="service-card__icon">❄️</div>
+        <h4 class="service-card__title">Рефрижераторы</h4>
+        <p class="service-card__desc">Перевозка продуктов, фармацевтики и температурных грузов. Поддержание режима от -20 до +12°C.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-3">
+        <div class="service-card__icon">📦</div>
+        <h4 class="service-card__title">Фургоны</h4>
+        <p class="service-card__desc">Закрытый кузов для ценных грузов: мебель, техника, электроника. Максимальная защита от повреждений.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <div class="service-card__icon">🏗️</div>
+        <h4 class="service-card__title">Бортовые</h4>
+        <p class="service-card__desc">Стройматериалы, металлоконструкции, трубы, пиломатериалы. Загрузка краном сверху и с боков.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-2">
+        <div class="service-card__icon">🔲</div>
+        <h4 class="service-card__title">Контейнеры</h4>
+        <p class="service-card__desc">Контейнерные перевозки 20 и 40 футов. Мультимодальные маршруты по всей России и СНГ.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-3">
+        <div class="service-card__icon">🛤️</div>
+        <h4 class="service-card__title">Межгород</h4>
+        <p class="service-card__desc">Любые направления по России. Регулярные маршруты, оптимальные цены, прогнозируемые сроки.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ПОЧЕМУ МЫ ============ -->
+<section class="section section--dark">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label" style="color: var(--c-orange-400);">Преимущества</span>
+      <h2>Почему выбирают нас</h2>
+      <p class="lead" style="color: rgba(255,255,255,0.5);">Полный цикл грузоперевозки — от расчёта до доставки. Без посредников, без скрытых комиссий.</p>
+    </div>
+
+    <div class="usp-grid">
+      <div class="usp reveal reveal--delay-1">
+        <div class="usp__icon">⚡</div>
+        <div>
+          <div class="usp__title">Расчёт за 2 минуты</div>
+          <p class="usp__desc">Напишите в чат или заполните форму — диспетчер моментально подберёт варианты и назовёт цену.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-2">
+        <div class="usp__icon">✅</div>
+        <div>
+          <div class="usp__title">500+ проверенных</div>
+          <p class="usp__desc">Работаем только с проверенными перевозчиками. Каждый партнёр прошёл верификацию и имеет положительный рейтинг.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-3">
+        <div class="usp__icon">💰</div>
+        <div>
+          <div class="usp__title">Честная цена</div>
+          <p class="usp__desc">Прозрачное ценообразование без скрытых наценок. Сравниваем предложения и находим лучшие условия.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-1">
+        <div class="usp__icon">📋</div>
+        <div>
+          <div class="usp__title">Полное сопровождение</div>
+          <p class="usp__desc">Контролируем перевозку от заявки до выгрузки. Диспетчер на связи 24/7 по любым вопросам.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-2">
+        <div class="usp__icon">🗺️</div>
+        <div>
+          <div class="usp__title">Вся Россия</div>
+          <p class="usp__desc">Более 50 городов в сети. Межгородние перевозки по любым направлениям — от Калининграда до Владивостока.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-3">
+        <div class="usp__icon">🔄</div>
+        <div>
+          <div class="usp__title">Постоянным — выгоднее</div>
+          <p class="usp__desc">Помним ваши маршруты и предпочтения. Постоянным клиентам — приоритетный подбор и лучшие условия.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wave-divider" style="position: absolute; bottom: -1px; left: 0; right: 0;">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="var(--c-gray-50)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ ОТЗЫВЫ ============ -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Отзывы</span>
+      <h2>Что говорят клиенты</h2>
+    </div>
+
+    <div class="testimonials">
+      <div class="testimonial reveal reveal--delay-1">
+        <span class="testimonial__quote">"</span>
+        <p class="testimonial__text">Перевозили мебель из Сарапула в Казань. Диспетчер нашёл перевозчика за 20 минут, цена оказалась ниже, чем я находил сам. Теперь обращаюсь постоянно.</p>
+        <div class="testimonial__author">
+          <div class="testimonial__avatar">ИП</div>
+          <div>
+            <div class="testimonial__name">Иван Петрович</div>
+            <div class="testimonial__role">ИП, производство мебели</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial reveal reveal--delay-2">
+        <span class="testimonial__quote">"</span>
+        <p class="testimonial__text">Отправляю продукцию из Новосибирска каждую неделю. Ребята помнят мои маршруты, каждый раз предлагают сразу готовый вариант. Экономлю кучу времени.</p>
+        <div class="testimonial__author">
+          <div class="testimonial__avatar">АК</div>
+          <div>
+            <div class="testimonial__name">Алексей Козлов</div>
+            <div class="testimonial__role">Логист, «ТехноСтрой»</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial reveal reveal--delay-3">
+        <span class="testimonial__quote">"</span>
+        <p class="testimonial__text">Нужен был рефрижератор на Екатеринбург срочно. Нашли машину за час, температуру выдержали идеально. Рекомендую для скоропортящихся грузов.</p>
+        <div class="testimonial__author">
+          <div class="testimonial__avatar">МС</div>
+          <div>
+            <div class="testimonial__name">Марина Степанова</div>
+            <div class="testimonial__role">Директор, «ФрешПродукт»</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Вопросы</span>
+      <h2>Частые вопросы</h2>
+    </div>
+
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-question">
+          Какой минимальный вес груза?
+          <span class="faq-question__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-answer">
+          <p>Мы работаем с грузами от 200 кг. Для меньших объёмов рекомендуем курьерские службы — СДЭК, Деловые Линии или Почту России.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Как быстро вы находите перевозчика?
+          <span class="faq-question__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-answer">
+          <p>Обычно предложения от перевозчиков поступают за 15-30 минут. На популярных направлениях — ещё быстрее. Вам предложим 2-3 лучших варианта по цене и рейтингу.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Какие направления обслуживаете?
+          <span class="faq-question__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-answer">
+          <p>Работаем по всей России — более 50 городов. Межгородние перевозки любых направлений: от Калининграда до Владивостока. Внутригородские перевозки не выполняем.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Как формируется цена?
+          <span class="faq-question__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-answer">
+          <p>Цена зависит от маршрута, веса, объёма, типа кузова и сроков. Мы сравниваем предложения нескольких перевозчиков и предлагаем лучшую цену. Никаких скрытых комиссий.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Можно ли связаться с вами через Telegram?
+          <span class="faq-question__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-answer">
+          <p>Да! Telegram — наш основной канал связи. Напишите нам: <a href="https://t.me/ai_dispatcher_bot" target="_blank" rel="noopener">@ai_dispatcher_bot</a>. Диспетчер ответит за 1-2 минуты.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section cta-section">
+  <div class="container">
+    <h2 class="reveal">Нужна грузоперевозка?</h2>
+    <p class="lead reveal reveal--delay-1">Напишите нам — рассчитаем стоимость за 2 минуты и подберём проверенного перевозчика.</p>
+    <div class="reveal reveal--delay-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://t.me/ai_dispatcher_bot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">
+        Написать в Telegram
+      </a>
+      <a href="#quote" class="btn btn--outline-light btn--lg">Заполнить форму</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/chat-widget') %>

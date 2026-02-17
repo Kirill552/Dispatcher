@@ -1,0 +1,1819 @@
+ВАЖНО !!!!!!
+Обязательно ставим всегда при выкладке груза на АТИ: 
+1. type*: string
+Тип даты
+
+ready — готов к загрузке
+2.
+type*: string
+Тип времени
+
+bounded   - узнаем у клиента, время,
+3. 
+type*: string
+Тип времени
+
+bounded — с/по
+4.
+type*: string
+Тип оплаты.
+rate-request — запрос ставки
+5.
+hide_counter_offers: boolean (nullable)
+Встречные предложения видны только вам
+6.
+cash_available: boolean (nullable)
+Можно предлагать ставки наличными
+
+
+
+
+Добавление груза
+Перед добавлением происходит сначала проверка на возможность объединения грузов, а потом проверка на дублирование.
+
+Версия 
+2
+post
+/v2/cargos
+Модель и примеры
+Консоль
+Запрос
+Модель
+{
+cargo_application*:{
+Заявка груза
+
+external_id: string
+Максимальное количество символов 250
+Внешний номер груза или заказа
+
+route*:{
+Маршрут
+
+loading*:{
+Загрузка
+
+city_id*: int32 (nullable)
+Id города из словаря городов
+
+deprecated
+address: string
+Максимальное количество символов 200
+Адрес в населённом пункте
+
+deprecated
+coordinates:{
+Координаты
+
+longitude*: double (nullable)
+>=-180 and <= 180
+Долгота
+
+latitude*: double (nullable)
+>=-90 and <= 90
+Широта
+
+}
+location*:{
+Расположение
+
+type*: string
+
+manual
+city_id*: int32 (nullable)
+Id города из словаря городов
+
+address: string
+Максимальное количество символов 200
+Адрес в населённом пункте
+
+coordinates:{
+Координаты
+
+longitude*: double (nullable)
+>=-180 and <= 180
+Долгота
+
+latitude*: double (nullable)
+>=-90 and <= 90
+Широта
+
+}
+}
+near_cities: [int32]
+Ближайшие города. Id города из словаря городов
+
+dates*:{
+Даты загрузки
+
+type*: string
+Тип даты
+
+ready — готов к загрузке
+from-date — с даты
+permanent — постоянно
+rate-request — груза нет, запрос ставки
+
+ready
+time:{
+Время загрузки
+
+type*: string
+Тип времени
+
+bounded — с/по
+round-the-clock — круглосуточно
+
+bounded
+start: HH:mm (nullable)
+С
+
+end: HH:mm (nullable)
+По
+
+offset: +HH:mm (nullable)
+Часовой пояс
+
+}
+is_available_tomorrow: boolean (nullable)
+Готов к загрузке сегодня и завтра
+
+}
+cargos*:[{
+Параметры грузов
+
+id*: int32 (nullable)
+Порядковый номер груза внутри заявки
+
+name*: string
+Максимальное количество символов 200
+Наименование груза
+
+weight*:{
+Вес
+
+type: string
+Тип:
+
+tons — тонны
+kilos — килограммы
+quantity*: double (nullable)
+Количество от 10 kilos до 9999 tons
+
+}
+volume*:{
+Объём
+
+quantity*: double (nullable)
+Количество
+
+}
+packaging:{
+Упаковка
+
+type*: int32 (nullable)
+Id типа упаковки из словаря типов упаковок
+
+quantity: int32 (nullable)
+Количество
+
+}
+sizes:{
+Габариты
+
+length:{
+Длина, метры
+
+value*: double (nullable)
+Значение
+
+is_highlighted: boolean (nullable)
+Выделить значение цветом в результатах поиска
+
+}
+height:{
+Высота, метры
+
+value*: double (nullable)
+Значение
+
+is_highlighted: boolean (nullable)
+Выделить значение цветом в результатах поиска
+
+}
+width:{
+Ширина, метры
+
+value*: double (nullable)
+Значение
+
+is_highlighted: boolean (nullable)
+Выделить значение цветом в результатах поиска
+
+}
+diameter: double (nullable)
+Диаметр, метры
+
+}
+}]
+}
+unloading*:{
+Разгрузка
+
+city_id*: int32 (nullable)
+Id города из словаря городов
+
+deprecated
+address: string
+Максимальное количество символов 200
+Адрес в населённом пункте
+
+deprecated
+coordinates:{
+Координаты
+
+longitude*: double (nullable)
+>=-180 and <= 180
+Долгота
+
+latitude*: double (nullable)
+>=-90 and <= 90
+Широта
+
+}
+location*:{
+Расположение
+
+type*: string
+
+manual
+city_id*: int32 (nullable)
+Id города из словаря городов
+
+address: string
+Максимальное количество символов 200
+Адрес в населённом пункте
+
+coordinates:{
+Координаты
+
+longitude*: double (nullable)
+>=-180 and <= 180
+Долгота
+
+latitude*: double (nullable)
+>=-90 and <= 90
+Широта
+
+}
+}
+near_cities: [int32]
+Ближайшие города. Id города из словаря городов
+
+dates:{
+Даты разгрузки
+
+first_date: date-time (nullable)
+Дата разгрузки
+
+last_date: date-time (nullable)
+Поздняя дата разгрузки
+
+time:{
+Время разгрузки
+
+type*: string
+Тип времени
+
+bounded — с/по
+round-the-clock — круглосуточно
+
+bounded
+start: HH:mm (nullable)
+С
+
+end: HH:mm (nullable)
+По
+
+offset: +HH:mm (nullable)
+Часовой пояс
+
+}
+}
+}
+way_points:[{
+Точки маршрута
+
+type*: string
+
+loading
+city_id*: int32 (nullable)
+Id города из словаря городов
+
+deprecated
+address: string
+Максимальное количество символов 200
+Адрес в населённом пункте
+
+deprecated
+coordinates:{
+Координаты
+
+longitude*: double (nullable)
+>=-180 and <= 180
+Долгота
+
+latitude*: double (nullable)
+>=-90 and <= 90
+Широта
+
+}
+location*:{
+Расположение
+
+type*: string
+
+manual
+city_id*: int32 (nullable)
+Id города из словаря городов
+
+address: string
+Максимальное количество символов 200
+Адрес в населённом пункте
+
+coordinates:{
+Координаты
+
+longitude*: double (nullable)
+>=-180 and <= 180
+Долгота
+
+latitude*: double (nullable)
+>=-90 and <= 90
+Широта
+
+}
+}
+cargos:[{
+Параметры загружаемых грузов
+
+id*: int32 (nullable)
+Порядковый номер груза внутри заявки
+
+name*: string
+Максимальное количество символов 200
+Наименование груза
+
+weight*:{
+Вес
+
+type: string
+Тип:
+
+tons — тонны
+kilos — килограммы
+quantity*: double (nullable)
+Количество от 10 kilos до 9999 tons
+
+}
+volume*:{
+Объём
+
+quantity*: double (nullable)
+Количество
+
+}
+packaging:{
+Упаковка
+
+type*: int32 (nullable)
+Id типа упаковки из словаря типов упаковок
+
+quantity: int32 (nullable)
+Количество
+
+}
+sizes:{
+Габариты
+
+length:{
+Длина, метры
+
+value*: double (nullable)
+Значение
+
+is_highlighted: boolean (nullable)
+Выделить значение цветом в результатах поиска
+
+}
+height:{
+Высота, метры
+
+value*: double (nullable)
+Значение
+
+is_highlighted: boolean (nullable)
+Выделить значение цветом в результатах поиска
+
+}
+width:{
+Ширина, метры
+
+value*: double (nullable)
+Значение
+
+is_highlighted: boolean (nullable)
+Выделить значение цветом в результатах поиска
+
+}
+diameter: double (nullable)
+Диаметр, метры
+
+}
+}]
+loading_date:{
+Параметры даты и времени загрузки
+
+first_date: yyyy-MM-dd (nullable)
+Дата начала
+
+last_date: yyyy-MM-dd (nullable)
+Дата конца
+
+time:{
+Время загрузки
+
+type*: string
+Тип времени
+
+bounded — с/по
+round-the-clock — круглосуточно
+
+bounded
+start: HH:mm (nullable)
+С
+
+end: HH:mm (nullable)
+По
+
+offset: +HH:mm (nullable)
+Часовой пояс
+
+}
+}
+}]
+is_round_trip: boolean (nullable)
+Кругорейс
+
+deprecated
+}
+truck*:{
+Транспорт
+
+trucks_count: int32 (nullable)
+Количество машин
+
+load_type*: string
+Загрузка:
+
+ftl — отдельной машиной
+dont-care — отдельной машиной или догрузом
+body_types*: [int32]
+TypeId типов кузовов. Значение TypeId из словаря кузовов
+
+body_loading:{
+Способы загрузки
+
+types: [int32]
+Id типа загрузки из словаря типов загрузок
+
+is_all_required: boolean (nullable)
+Обязательны все выбранные
+
+}
+body_unloading:{
+Способы разгрузки
+
+types: [int32]
+Id типа загрузки из словаря типов загрузок
+
+is_all_required: boolean (nullable)
+Обязательны все выбранные
+
+}
+temperature:{
+Температура
+
+from: int32 (nullable)
+От
+
+to: int32 (nullable)
+До
+
+}
+documents:{
+Разрешения
+
+tir: boolean (nullable)
+TIR todo ссылка на фак
+
+cmr: boolean (nullable)
+CMR todo ссылка на фак
+
+t1: boolean (nullable)
+T1 todo ссылка на фак
+
+medical_card: boolean (nullable)
+Медкнижка
+
+}
+requirements:{
+Требования
+
+logging_truck: boolean (nullable)
+Коники
+
+road_train: boolean (nullable)
+Сцепка
+
+air_suspension: boolean (nullable)
+Пневмоход
+
+}
+adr: int32 (nullable)
+ADR
+
+belts_count: int32 (nullable)
+Количество ремней
+
+is_tracking: boolean (nullable)
+Трекинг через АТИ Водитель
+
+required_capacity: double (nullable)
+Требуемая грузоподъемность в тоннах
+
+}
+payment*:{
+Оплата
+
+type*: string
+Тип оплаты.
+
+with-bargaining — возможен торг
+without-bargaining — без торга
+rate-request — запрос ставки
+auction — торги
+
+rate-request
+hide_counter_offers: boolean (nullable)
+Встречные предложения видны только вам
+
+direct_offer: boolean (nullable)
+Прямой договор
+
+prepayment:{
+Предоплата
+
+percent: int32 (nullable)
+Процент предоплаты
+
+using_fuel: boolean (nullable)
+Предоплата топливом
+
+}
+payment_mode:{
+Режим оплаты
+
+type*: string
+Тип режима оплаты:
+
+on-unloading — оплата на выгрузке
+delayed-payment — оплата через N банковских дней
+
+on-unloading
+}
+rate_with_vat_available: boolean (nullable)
+Можно предлагать ставки безнал с НДС
+
+rate_without_vat_available: boolean (nullable)
+Можно предлагать ставки безнал без НДС
+
+cash_available: boolean (nullable)
+Можно предлагать ставки наличными
+
+auto_invites_settings:{
+Автоматическое приглашение на лучшее встречное предложение
+
+invite_delay: string
+Период приема встречного предложения до автоматического приглашения
+
+invite_duration: string
+Период действия автоматического приглашения
+
+max_percent_deviation: int32 (nullable)
+Максимальное возможное отклонение от ставки для срабатывания автоматического приглашения
+
+need_archive_on_invite: boolean
+Архивировать заявку при срабатывании автоматического приглашения
+
+}
+}
+documents:[{
+Фото груза и документов
+
+id: string
+Старый id документа
+
+deprecated
+file_id: string
+Новый id документа
+
+}]
+boards:[{
+Площадки груза
+
+id*: string
+Id площадки
+
+publication_mode: string
+Опубликовать груз
+
+now – сразу
+15m – через 15 минут
+30m – через 30 минут
+1h – через час
+3h – через 3 часа
+6h – через 6 часов
+exact-time - в точное время
+publication_time: date-time (nullable)
+Точное время публикации груза, для publication_mode = 'exact-time'
+
+cancel_publish_on_auction_bet: boolean (nullable)
+Не публиковать груз при отложенной публикации, если появилась ставка по Торгам
+
+reservation_enabled: boolean (nullable)
+Разрешить перевозчикам бронировать груз
+
+}]
+paid_features:{
+Платные услуги: приоритетный показ, стелс
+
+priority_view:{
+Приоритетный показ
+
+rate*: double (nullable)
+Ставка за просмотр
+
+limit: double (nullable)
+Лимит на заявку
+
+daily_limit: double (nullable)
+Суточный лимит
+
+only_for_paid_users: boolean (nullable)
+Показывать приоритетный груз только платным пользователям
+
+}
+stealth:{
+Стэлс
+
+list_id: uuid (nullable)
+Id списка фирм для скрытия
+
+minimal_registration_date: date-time (nullable)
+Минимальная дата регистрации фирм, которые будут видеть груза
+
+minimal_stars_count: int32 (nullable)
+Минимальное количество звёзд фирм, которые будут видеть груз
+
+}
+}
+note: string
+Максимальное количество символов 1000
+Примечание к заявке
+
+contacts*: [int32]
+Id контактов заявки
+
+}
+}
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/v2/cargos' \
+  -X 'POST' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"cargo_application":{"external_id":"string","route":{"loading":{"location":{"type":"string"}},"unloading":{"location":{"type":"string"}},"way_points":[{"location":{"type":"string"}}]},"truck":{"trucks_count":0,"load_type":"string","body_types":[0],"body_loading":{"types":[0],"is_all_required":false},"body_unloading":{"types":[0],"is_all_required":false},"temperature":{"from":0,"to":0},"documents":{"tir":false,"cmr":false,"t1":false,"medical_card":false},"requirements":{"logging_truck":false,"road_train":false,"air_suspension":false},"adr":0,"belts_count":0,"is_tracking":false,"required_capacity":0.5},"payment":{"type":"string","hide_counter_offers":false,"direct_offer":false,"prepayment":{"percent":0,"using_fuel":false},"payment_mode":{"type":"string"}},"documents":[{"file_id":"string"}],"boards":[{"id":"string","publication_mode":"string","publication_time":"1970-01-01T00:00:00.000Z","cancel_publish_on_auction_bet":false,"reservation_enabled":false}],"paid_features":{"priority_view":{"rate":0.5,"limit":0.5,"daily_limit":0.5,"only_for_paid_users":false},"stealth":{"list_id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","minimal_registration_date":"1970-01-01T00:00:00.000Z","minimal_stars_count":0}},"note":"string","contacts":[0]}}'
+
+Ответ
+200
+Success
+Модель
+{
+cargo_application:{
+Заявка груза
+
+cargo_id: uuid
+ID груза OBSOLETE используй поле CargoApplicationId
+
+deprecated
+cargo_number: string
+Номер груза, автоматически генерируемый ATI.SU OBSOLETE используй поле CargoApplicationNumber
+
+deprecated
+source: int32
+OBSOLETE используй поле OriginSource
+
+deprecated
+contacts: [int32]
+Контакты OBSOLETE используй поле ApplicationContacts
+
+distance: int32
+Дистанция, км
+
+deprecated
+cargo_application_id*: uuid
+Id груза
+
+snapshot_id*: int64
+Id состояния груза (меняется при каждом редактировании)
+
+cargo_application_number*: string
+Номер груза, автоматически генерируемый ATI.SU
+
+department_id*: int32
+Подразделение, которому принадлежит заявка.
+
+persistent_user_id*: int32
+Идентификатор пользователя, разместившего заявку
+
+actor_contact_id: int32 (nullable)
+Идентификатор контакта, разместившего заявку
+
+external_id: string (nullable)
+Внешний номер груза или заказа
+
+added_at*: date-time
+Время добавления груза, UTC
+
+updated_at*: date-time
+Время последнего изменения груза, UTC
+
+origin_source*: string
+Использованный api при создания груза:
+
+web-cargos-api,
+mobile-cargos-api,
+internal-cargos-api,
+public-cargos-api,
+internal-atrucks,
+internal-torgtrans,
+csv_import,
+pass-through,
+unknown
+route*:{
+Маршрут
+
+loading*:{
+Загрузка
+
+city_id*: int32
+Id города из словаря OBSOLETE используй поле City.CityId
+
+deprecated
+city*:{
+Информация о населённом пункте
+
+city_id*: int32
+Id города из словаря городов
+
+region_id: int32 (nullable)
+Id региона из словаря регионов
+
+country_id: int32 (nullable)
+Id страны из словаря стран
+
+}
+coordinates:{
+Координаты
+
+longitude*: double
+Долгота
+
+latitude*: double
+Широта
+
+}
+address: string (nullable)
+Адрес в населённом пункте
+
+organization:{
+Данные об организации из справочника
+
+organization_id*: uuid
+Id из справочника организаций
+
+address_id*: uuid
+Id адреса в организации
+
+}
+near_cities: [int32]
+Ближайшие города. Id города из словаря OBSOLETE используй поле NearbyCities
+
+dates*:{
+Даты загрузки
+
+type*: string
+Тип даты:
+
+from-date — в промежутке дат first_date и last_date
+ready — готов
+permanent — постоянно
+rate-request — груза нет, запрос ставки
+
+ready
+first_date*: date-time
+Дата начала
+
+last_date*: date-time
+Дата конца
+
+is_available_tomorrow*: boolean
+Готов к загрузке сегодня и завтра (TODO возможно убрать)
+
+time:{
+Время загрузки
+
+type*: string
+
+bounded
+start: HH:mm (nullable)
+Время "с"
+
+end: HH:mm (nullable)
+Время "по"
+
+offset: +HH:mm (nullable)
+Часовой пояс
+
+}
+}
+cargos*:[{
+Параметры грузов на загрузку
+
+cargo_id*: int32
+Порядковый Id груза внутри заявки
+
+weight:{
+Вес
+
+type*: string
+Тип:
+
+tons — тонны
+kilos — килограммы
+quantity*: double
+Количество
+
+}
+volume:{
+Объём
+
+quantity*: double
+Количество
+
+}
+sizes:{
+Габариты
+
+length:{
+Длина, метры
+
+value*: double
+Значение
+
+is_highlighted*: boolean
+Выделить значение цветом в результатах поиска
+
+}
+height:{
+Высота, метры
+
+value*: double
+Значение
+
+is_highlighted*: boolean
+Выделить значение цветом в результатах поиска
+
+}
+width:{
+Ширина, метры
+
+value*: double
+Значение
+
+is_highlighted*: boolean
+Выделить значение цветом в результатах поиска
+
+}
+diameter: double (nullable)
+Диаметр, метры
+
+}
+name*: string
+Наименование груза
+
+packaging:{
+Упаковка
+
+type*: int32
+Id типа упаковки из словаря типов упаковок
+
+quantity: int32 (nullable)
+Количество
+
+}
+}]
+nearby_cities:[{
+Ближайшие крупные города
+
+id*: int32
+distance: double (nullable)
+}]
+}
+unloading*:{
+Разгрузка
+
+city_id*: int32
+Id города из словаря OBSOLETE используй поле City.CityId
+
+deprecated
+city*:{
+Информация о населённом пункте
+
+city_id*: int32
+Id города из словаря городов
+
+region_id: int32 (nullable)
+Id региона из словаря регионов
+
+country_id: int32 (nullable)
+Id страны из словаря стран
+
+}
+coordinates:{
+Координаты
+
+longitude*: double
+Долгота
+
+latitude*: double
+Широта
+
+}
+address: string (nullable)
+Адрес в населённом пункте
+
+organization:{
+Данные об организации из справочника
+
+organization_id*: uuid
+Id из справочника организаций
+
+address_id*: uuid
+Id адреса в организации
+
+}
+near_cities: [int32]
+Ближайшие города. Id города из словаря OBSOLETE используй поле NearbyCities
+
+dates:{
+Даты разгрузки
+
+first_date: date-time (nullable)
+Дата разгрузки
+
+last_date: date-time (nullable)
+Поздняя дата разгрузки
+
+time:{
+Время разгрузки
+
+type*: string
+
+bounded
+start: HH:mm (nullable)
+Время "с"
+
+end: HH:mm (nullable)
+Время "по"
+
+offset: +HH:mm (nullable)
+Часовой пояс
+
+}
+}
+nearby_cities:[{
+Ближайшие крупные города
+
+id*: int32
+distance: double (nullable)
+}]
+}
+way_points:[{
+Точки маршрута
+
+type*: string
+Тип промежуточной точки:
+
+loading - точка загрузки
+unloading - точка разгрузки
+customs - таможня
+go-through - точка "ехать через"
+
+loading
+city_id*: int32
+Id города из словаря OBSOLETE используй поле City.CityId
+
+deprecated
+city*:{
+Информация о населённом пункте
+
+city_id*: int32
+Id города из словаря городов
+
+region_id: int32 (nullable)
+Id региона из словаря регионов
+
+country_id: int32 (nullable)
+Id страны из словаря стран
+
+}
+coordinates:{
+Координаты
+
+longitude*: double
+Долгота
+
+latitude*: double
+Широта
+
+}
+address: string (nullable)
+Адрес в населённом пункте
+
+organization:{
+Данные об организации из справочника
+
+organization_id*: uuid
+Id из справочника организаций
+
+address_id*: uuid
+Id адреса в организации
+
+}
+cargos:[{
+Параметры загружаемых грузов
+
+cargo_id*: int32
+Порядковый Id груза внутри заявки
+
+weight:{
+Вес
+
+type*: string
+Тип:
+
+tons — тонны
+kilos — килограммы
+quantity*: double
+Количество
+
+}
+volume:{
+Объём
+
+quantity*: double
+Количество
+
+}
+sizes:{
+Габариты
+
+length:{
+Длина, метры
+
+value*: double
+Значение
+
+is_highlighted*: boolean
+Выделить значение цветом в результатах поиска
+
+}
+height:{
+Высота, метры
+
+value*: double
+Значение
+
+is_highlighted*: boolean
+Выделить значение цветом в результатах поиска
+
+}
+width:{
+Ширина, метры
+
+value*: double
+Значение
+
+is_highlighted*: boolean
+Выделить значение цветом в результатах поиска
+
+}
+diameter: double (nullable)
+Диаметр, метры
+
+}
+name*: string
+Наименование груза
+
+packaging:{
+Упаковка
+
+type*: int32
+Id типа упаковки из словаря типов упаковок
+
+quantity: int32 (nullable)
+Количество
+
+}
+}]
+loading_date:{
+Даты и время загрузки
+
+first_date: date-time (nullable)
+Дата начала
+
+last_date: date-time (nullable)
+Дата конца
+
+time:{
+Время загрузки
+
+type*: string
+
+bounded
+start: HH:mm (nullable)
+Время "с"
+
+end: HH:mm (nullable)
+Время "по"
+
+offset: +HH:mm (nullable)
+Часовой пояс
+
+}
+}
+}]
+is_round_trip: boolean (nullable)
+Кругорейс
+
+}
+truck*:{
+Транспорт
+
+trucks_count*: int32
+Количество машин
+
+load_type*: string
+Загрузка:
+
+ftl — отдельной машиной
+dont-care — не важно
+body_types*: [int32]
+TypeId типов кузовов. Значение TypeId из словаря кузовов
+
+is_tracking*: boolean
+Трекинг через АТИ Водитель
+
+adr: int32 (nullable)
+ADR
+
+belts_count: int32 (nullable)
+Количество ремней
+
+required_capacity: double (nullable)
+Требуемая грузоподъемность в тоннах
+
+body_loading:{
+Способы загрузки
+
+types*: [int32]
+Id типа загрузки из словаря типов загрузок
+
+is_all_required*: boolean
+Обязательны все выбранные
+
+}
+body_unloading:{
+Способы разгрузки
+
+types*: [int32]
+Id типа загрузки из словаря типов загрузок
+
+is_all_required*: boolean
+Обязательны все выбранные
+
+}
+temperature:{
+Температура
+
+from: int32 (nullable)
+От
+
+to: int32 (nullable)
+До
+
+}
+documents:{
+Разрешения
+
+tir*: boolean
+TIR
+
+cmr*: boolean
+CMR
+
+t1*: boolean
+T1
+
+medical_card*: boolean
+Медкнижка
+
+}
+requirements:{
+Требования
+
+logging_truck*: boolean
+Коники
+
+road_train*: boolean
+Сцепка
+
+air_suspension*: boolean
+Пневмоход
+
+}
+}
+payment*:{
+Оплата
+
+type*: string
+Тип оплаты:
+
+with-bargaining - ставка с возможностью торга
+without-bargaining - ставка без возможности торга
+rate-request - запрос ставки
+auction - у заявки проводятся Торги
+
+rate-request
+hide_counter_offers*: boolean
+Встречные предложения видны только вам
+
+direct_offer*: boolean
+Прямой договор
+
+prepayment:{
+Предоплата
+
+percent: int32 (nullable)
+Процент предоплаты
+
+using_fuel*: boolean
+Предоплата топливом
+
+}
+payment_mode:{
+Режим оплаты
+
+type*: string
+Тип режима оплаты:
+
+delayed-payment — через несколько дней
+on-unloading — на выгрузке
+
+on-unloading
+}
+rate_with_vat_available*: boolean
+Можно предлагать ставки безнал с НДС
+
+rate_without_vat_available*: boolean
+Можно предлагать ставки безнал без НДС
+
+cash_available*: boolean
+Можно предлагать ставки наличными
+
+auto_invites_settings:{
+Настройки автоматического приглашения на лучшее встречное предложение
+
+invite_delay*: string
+Период приема встречного предложения до автоматического приглашения
+
+invite_duration*: string
+Период действия автоматического приглашения
+
+need_archive_on_invite*: boolean
+Архивировать заявку при срабатывании автоматического приглашения
+
+max_percent_deviation: int32 (nullable)
+Максимальное возможное отклонение от ставки для срабатывания автоматического приглашения
+
+}
+}
+boards*:[{
+Площадки груза
+
+id*: string
+Id площадки
+
+publication_mode*: string
+Опубликовать груз: now – сразу 15m – через 15 минут 30m – через 30 минут 1h – через час 3h – через 3 часа 6h – через 6 часов exact-time - в точное время
+
+publication_time*: date-time
+Точное время публикации груза, для publication_mode = 'exact-time'
+
+cancel_publish_on_auction_bet*: boolean
+Не публиковать груз при отложенной публикации, если появилась ставка по Торгам
+
+reservation_enabled*: boolean
+Разрешить перевозчикам бронировать груз
+
+is_published*: boolean
+Груз опубликован на площадке
+
+}]
+documents:[{
+Фото груза и документов
+
+id: string
+Старый id документа OBSOLETE используй поле FileID
+
+deprecated
+file_id*: string
+Id документа в API Плюшкин (TODO ссылка)
+
+name*: string
+Название документа
+
+link*: string
+Ссылка на документ
+
+}]
+application_contacts*:[{
+Информация о контактах груза
+
+id*: int32
+Id контакта
+
+}]
+paid_features:{
+Платные услуги
+
+priority_view:{
+Приоритетный показ
+
+money_spent_per_day: double
+Потрачено атисов за день OBSOLETE необходимо получать эту информацию из api приоритетного показа по грузам
+
+deprecated
+money_spent_per_order: double
+Потрачено атисов на эту заявку OBSOLETE необходимо получать эту информацию из api приоритетного показа по грузам
+
+deprecated
+rate*: double
+Ставка за просмотр
+
+only_for_paid_users*: boolean
+Показывать приоритетный груз только платным пользователям
+
+limit: double (nullable)
+Лимит на заявку
+
+daily_limit: double (nullable)
+Суточный лимит
+
+}
+stealth:{
+Стэлс
+
+list_id: uuid (nullable)
+Id списка фирм для скрытия
+
+minimal_registration_date: date-time (nullable)
+Минимальная дата регистрации фирм, которые будут видеть груза
+
+minimal_stars_count: int32 (nullable)
+Минимальное количество звёзд фирм, которые будут видеть груз
+
+}
+}
+note: string (nullable)
+Примечание к грузу
+
+lot_id: uuid (nullable)
+Id Лота, к которому прикреплён данный груз
+
+lot_number: int32 (nullable)
+Номер Лота, к которому прикреплён данный груз
+
+is_pass_through_copy: boolean (nullable)
+Является ли груз сквозной копией
+
+is_archived: boolean (nullable)
+Отправлен ли груз в архив
+
+archive_date: date-time (nullable)
+Время отправки груза в архив, UTC
+
+}
+}
+Пример
+{
+"cargo_application":{
+"cargo_application_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+,
+"snapshot_id"
+:
+0
+,
+"cargo_application_number"
+:
+"string"
+,
+"department_id"
+:
+0
+,
+"persistent_user_id"
+:
+0
+,
+"actor_contact_id"
+:
+0
+,
+"external_id"
+:
+"string"
+,
+"added_at"
+:
+"1970-01-01T00:00:00.000Z"
+,
+"updated_at"
+:
+"1970-01-01T00:00:00.000Z"
+,
+"origin_source"
+:
+"string"
+,
+"route":{
+"loading":{
+"city":{
+"city_id"
+:
+0
+,
+"region_id"
+:
+0
+,
+"country_id"
+:
+0
+},
+"coordinates":{
+"longitude"
+:
+0.5
+,
+"latitude"
+:
+0.5
+},
+"address"
+:
+"string"
+,
+"organization":{
+"organization_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+,
+"address_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+},
+"unloading":{
+"city":{
+"city_id"
+:
+0
+,
+"region_id"
+:
+0
+,
+"country_id"
+:
+0
+},
+"coordinates":{
+"longitude"
+:
+0.5
+,
+"latitude"
+:
+0.5
+},
+"address"
+:
+"string"
+,
+"organization":{
+"organization_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+,
+"address_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+},
+"way_points":[
+{
+"city":{
+"city_id"
+:
+0
+,
+"region_id"
+:
+0
+,
+"country_id"
+:
+0
+},
+"coordinates":{
+"longitude"
+:
+0.5
+,
+"latitude"
+:
+0.5
+},
+"address"
+:
+"string"
+,
+"organization":{
+"organization_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+,
+"address_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+}
+],
+"is_round_trip"
+:
+false
+},
+"truck":{
+"trucks_count"
+:
+0
+,
+"load_type"
+:
+"string"
+,
+"body_types":[
+0
+],
+"is_tracking"
+:
+false
+,
+"adr"
+:
+0
+,
+"belts_count"
+:
+0
+,
+"required_capacity"
+:
+0.5
+,
+"body_loading":{
+"types":[
+0
+],
+"is_all_required"
+:
+false
+},
+"body_unloading":{
+"types":[
+0
+],
+"is_all_required"
+:
+false
+},
+"temperature":{
+"from"
+:
+0
+,
+"to"
+:
+0
+},
+"documents":{
+"tir"
+:
+false
+,
+"cmr"
+:
+false
+,
+"t1"
+:
+false
+,
+"medical_card"
+:
+false
+},
+"requirements":{
+"logging_truck"
+:
+false
+,
+"road_train"
+:
+false
+,
+"air_suspension"
+:
+false
+}
+},
+"payment":{
+"type"
+:
+"string"
+,
+"hide_counter_offers"
+:
+false
+,
+"direct_offer"
+:
+false
+,
+"prepayment":{
+"percent"
+:
+0
+,
+"using_fuel"
+:
+false
+},
+"payment_mode":{
+"type"
+:
+"string"
+}
+},
+"boards":[
+{
+"id"
+:
+"string"
+,
+"publication_mode"
+:
+"string"
+,
+"publication_time"
+:
+"1970-01-01T00:00:00.000Z"
+,
+"cancel_publish_on_auction_bet"
+:
+false
+,
+"reservation_enabled"
+:
+false
+,
+"is_published"
+:
+false
+}
+],
+"documents":[
+{
+"file_id"
+:
+"string"
+,
+"name"
+:
+"string"
+,
+"link"
+:
+"string"
+}
+],
+"application_contacts":[
+{
+"id"
+:
+0
+}
+],
+"paid_features":{
+"priority_view":{
+"rate"
+:
+0.5
+,
+"only_for_paid_users"
+:
+false
+,
+"limit"
+:
+0.5
+,
+"daily_limit"
+:
+0.5
+},
+"stealth":{
+"list_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+,
+"minimal_registration_date"
+:
+"1970-01-01T00:00:00.000Z"
+,
+"minimal_stars_count"
+:
+0
+}
+},
+"note"
+:
+"string"
+,
+"lot_id"
+:
+"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+,
+"lot_number"
+:
+0
+,
+"is_pass_through_copy"
+:
+false
+,
+"is_archived"
+:
+false
+,
+"archive_date"
+:
+"1970-01-01T00:00:00.000Z"
+}
+}

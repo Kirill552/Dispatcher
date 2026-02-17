@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /webchat/
+
+Sitemap: https://ai-dispatcher.ru/sitemap.xml
+
+Host: ai-dispatcher.ru

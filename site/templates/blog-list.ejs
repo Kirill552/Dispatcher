@@ -1,0 +1,50 @@
+<%- include('partials/head', {
+  title: 'Блог — статьи о грузоперевозках',
+  description: 'Полезные статьи о грузоперевозках по России: стоимость, маршруты, типы транспорта, советы по логистике.',
+  canonical: '/blog',
+  keywords: 'грузоперевозки статьи, логистика блог, стоимость грузоперевозок'
+}) %>
+<%- include('partials/nav', { currentPage: 'blog' }) %>
+
+<div class="page-header">
+  <div class="container">
+    <h1 class="reveal">Блог</h1>
+    <p class="lead reveal reveal--delay-1">Полезные статьи о грузоперевозках: цены, маршруты, советы по выбору транспорта.</p>
+  </div>
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <% if (typeof articles !== 'undefined' && articles.length > 0) { %>
+      <div class="blog-grid">
+        <% articles.forEach(function(article, i) { %>
+          <div class="blog-card reveal reveal--delay-<%= (i % 3) + 1 %>">
+            <div class="blog-card__image">
+              📄
+            </div>
+            <div class="blog-card__body">
+              <div class="blog-card__date"><%= article.date || '' %></div>
+              <h3 class="blog-card__title">
+                <a href="/blog/<%= article.slug %>"><%= article.title %></a>
+              </h3>
+              <p class="blog-card__excerpt"><%= article.description || '' %></p>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div style="text-align: center; padding: var(--sp-4xl) 0;">
+        <h3 style="color: var(--c-gray-500); font-weight: 400;">Статьи скоро появятся</h3>
+        <p class="text-secondary" style="margin-top: var(--sp-md);">Мы готовим полезные материалы о грузоперевозках.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/chat-widget') %>

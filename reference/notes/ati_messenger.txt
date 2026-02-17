@@ -1,0 +1,835 @@
+API для работы с АТИ Мессенджером
+API Мессенджера предоставляет набор методов, необходимых для получения списка чатов пользователя ATI.SU, получения сообщений в чате, отправки сообщения в чат и другие. Благодаря этому API можно организовать интеграцию между мессенджером и сторонней системой.
+
+Используемые термины
+Чат - абстрактная сущность чата в мессенджере, любой чат имеет одну или более подписку.
+
+Подписка - связка пользователя и конкретного канала. Диалог, например, состоит из 2-х подписок, групповой чат - из N подписок. Список чатов, отображающийся в интерфейсе, есть список подписок. Подписка так же содержит опции пользователя относительно этого чата (скрыт, заблокирован, закреплен и т.п.).
+
+Диалог - чат между двумя участниками; диалог нельзя удалить, только скрыть.
+
+Групповой чат - чат между группой участников, пользователи вступают чат по приглашению; в закрытых чатах приглашать могут только администраторы, в открытых - все участники.
+
+Администратор - создатель и владелец группового чата. В закрытых группах только администратор может приглашать пользователей в чат.
+
+Канал - групповой чат, писать в который может только администратор.
+
+История - список сообщений чата.
+
+Хвост - последнее сообщение в истории (отображается в каждом чате из списка).
+
+Пользователь ATI.SU - участник ATI.SU, обладающий лицензией и имеющий доступ ко всем сервисам ATI.SU.
+
+Псевдопользователь(АТИ Водитель) - пользователь чата, не являющийся полноценным участником ATI.SU, но имеющий возможность быть участником как диалога, так и группового чата в мессенджере.
+
+ID аккаунта ATI.SU - уникальный идентификатор аккаунта в ATI.SU, для АТИ водителя имеет формат driver_{номер телефона}.
+
+User ID - {ID аккаунта ATI.SU}.{ID контакта}, у АТИ водителя контакт ID контакта всегда 0.
+
+АТИ код - код участника ATI.SU отображающийся в шапке сайта и в профиле участника, может совпадать с ID аккаунта. Код АТИ Водителя совпадает с ID.
+
+Структура подписки
+Подписка является ключевой сущностью в чате, большинство АПИ методов так или иначе отдают объект подписки в качестве ответа. Некоторые поля в теле подписки могут дублироваться или казаться избыточными, так же типы некоторых полей могут вызывать вопросы - все это связано с поддержкой старых версий, в новых версиях эти рудименты исчезнут.
+
+Подписки диалогов и групповых чатов выглядят похоже, но имеют некоторые отличия.
+
+Имя поля	Описание	Тип	Пример	Диалог	Группа	Обязательное поле
+id	ID чата	string	28ba1e3b16974c32989b1а	да	да	да
+channel_type	Тип чата	string	group	да	да	да
+name	Название чата	string	my awesome group	да	да	да
+description	Описание чата	string	my awesome group description	да	да	да
+owner	User ID владельца чата	string	890386.0	да	да	да
+user	User ID владельца подписки	string	1423414.0	да	да	да
+ctime	Дата и время создания чата (GMT+3)	string	2021-01-22T11:25:15+00:00	да	да	да
+utime	Дата и время последнего обновления подписки (GMT+3)	string	2021-03-24T08:51:53+00:00	да	да	да
+dts	UTC Timestamp последнего прочитанного пользователем сообщения	integer	1611314906749707	да	нет	да
+uts	UTC Timestamp последнего обновления подписки	integer	1622639302000000	да	да	да
+del_ts	UTC Timestamp последней очистки истории	integer	1622639302000000	да	нет	нет
+ts	UTC Timestamp последнего сообщения	integer	1622639302435456	да	да	да
+unread	Количество непрочитанных сообщений в чате	string	0	да	да	да
+partner	АТИ Код партнера	string	777	да	нет	да
+partner_full	АТИ Код партнера с ID контакта	string	777.0	да	нет	да
+partner_id	ID Аккаунта АТИ партнера	string	2716044	да	нет	да
+users	Список {АТИ код}.{ID контакта} участников чвтв	list	[“14234140.0”, “777.0”]	да	нет	да
+count	Кол-во участников	integer	3	нет	да	да
+invite	Флаг подписки с приглашением	bool	true	нет	да	нет
+removed	Флаг подписки на удаленный канал	bool	true	нет	да	нет
+excluded	Флаг исключенной подписки	bool	true	нет	да	нет
+pinned	Флаг прикрепленной подписки	string	1	да	да	нет
+locked	Флаг подписки с заблокированным юзером	string	1	да	нет	нет
+complaint	ID пожаловавшегося пользователя	string	1423414.0	да	нет	нет
+complaint_reason	Причина блокировки	string	spam	да	нет	нет
+tail	Хвост чата	dict	{…}	да	да	нет
+Описание методов
+Чаты
+Создание чата
+post
+/messenger/1.1/chats/
+Модель и примеры
+Консоль
+Запрос
+Модель
+{
+channel_type*: enum
+[dialog, channel, group, ati_driver]
+тип чата
+
+name*: string
+имя групп.чата/собеседника
+
+description*: string
+описание
+
+id: string
+{ID аккаунта партнера}.{id контакта} (только для типов dialog, ati_driver)
+
+ati_id: string
+{код в ATI.SU партнера}.{id контакта} (только для типов dialog, ati_driver)
+
+is_open: boolean
+открытый/закрытый (только для типов channel, group)
+
+members: [string]
+alias'ы (коды в ATI.SU) партнеров с contact_id (только для типов channel, group)
+
+}
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.1/chats/' \
+  -X 'POST' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"channel_type":"group","name":"Моя группа","is_open":true,"description":"Описание моей группы"}'
+
+Ответ
+200
+Данные подписки
+Модель
+{
+id: string
+id чата
+
+channel_type: string
+тип чата
+
+name: string
+Название чата (имя собеседника)
+
+ctime: string
+время создания чата (iso)
+
+utime: string
+время последнего изменения (iso)
+
+owner: string
+создатель чата
+
+tail:{...}
+description: string
+описание чата (для диалогов - название фирмы)
+
+users: [string]
+alias участника (c contact_id)
+
+partner: string
+id партнера (без contact_id)
+
+partner_id: string
+id партнера (c contact_id)
+
+partner_full: string
+alias партнера (c contact_id)
+
+count: integer
+количество учасчтников группового чата (для диалогов - null)
+
+dts: integer
+timestamp последней очистки сообщений
+
+unread: string
+количество непрочитанных сообщений
+
+user: string
+id юзера (c contact_id)
+
+uts: integer
+timestamp последнего изменения
+
+short_url: string
+короткий хэш для группового чата, используется в ссылке для приглашения, содерижтся только в подписке админа
+
+}
+Пример
+{
+"id"
+:
+"string"
+,
+"channel_type"
+:
+"string"
+,
+"name"
+:
+"string"
+,
+"ctime"
+:
+"string"
+,
+"utime"
+:
+"string"
+,
+"owner"
+:
+"string"
+,
+"tail":{
+"any-key":{
+"text"
+:
+"string"
+,
+"ts"
+:
+0
+,
+"user"
+:
+"string"
+,
+"from"
+:
+"string"
+,
+"file_name"
+:
+"string"
+,
+"image_name"
+:
+"string"
+}
+},
+"description"
+:
+"string"
+,
+"users":[
+"string"
+],
+"partner"
+:
+"string"
+,
+"partner_id"
+:
+"string"
+,
+"partner_full"
+:
+"string"
+,
+"count"
+:
+0
+,
+"dts"
+:
+0
+,
+"unread"
+:
+"string"
+,
+"user"
+:
+"string"
+,
+"uts"
+:
+0
+,
+"short_url"
+:
+"string"
+}
+400
+Ошибка валидации
+Для создания диалогов и групповых чатов используется общий метод.
+
+Диалог:
+
+При добавлении диалога создастся 2 подписки, но подписка собеседника будет скрыта пока в нее не напишут.
+Между двумя одинаковыми пользователями возможен только один диалог, при повторном создании будет возвращена та же самая подписка.
+Диалог можно создать двумя способами: используя ID аккаунта либо АТИ код, в зависимости от способа необходимо использовать поля id и ati_id соответственно. Не стоит указывать оба поля при запросе.
+
+Подписки
+Получение всех подписок пользователя
+get
+/messenger/1.2/subscriptions/
+Модель и примеры
+Консоль
+Запрос
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.2/subscriptions/' \
+  -X 'GET' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json'
+
+Ответ
+200
+Подписки пользователя
+Модель
+[{
+id: string
+id чата
+
+channel_type: string
+тип чата
+
+name: string
+Название чата (имя собеседника)
+
+ctime: string
+время создания чата (iso)
+
+utime: string
+время последнего изменения (iso)
+
+owner: string
+создатель чата
+
+tail:{
+any-key:{
+text: string
+текст сообщения (в случае картинки или файла - название объекта)
+
+ts: integer
+таймстемп (unix) сообщения
+
+user: string
+id отправителя, отстутствует в системных событиях
+
+from: string
+имя отправителя сообщения
+
+file_name: string
+имя файла (если есть)
+
+image_name: string
+имя картинки (если есть)
+
+}
+}
+description: string
+описание чата (для диалогов - название фирмы)
+
+users: [string]
+alias участника (c contact_id)
+
+partner: string
+id партнера (без contact_id)
+
+partner_id: string
+id партнера (c contact_id)
+
+partner_full: string
+alias партнера (c contact_id)
+
+count: integer
+количество учасчтников группового чата (для диалогов - null)
+
+dts: integer
+timestamp последней очистки сообщений
+
+unread: string
+количество непрочитанных сообщений
+
+user: string
+id юзера (c contact_id)
+
+uts: integer
+timestamp последнего изменения
+
+short_url: string
+короткий хэш для группового чата, используется в ссылке для приглашения, содерижтся только в подписке админа
+
+}]
+Пример
+[
+{
+"id"
+:
+"string"
+,
+"channel_type"
+:
+"string"
+,
+"name"
+:
+"string"
+,
+"ctime"
+:
+"string"
+,
+"utime"
+:
+"string"
+,
+"owner"
+:
+"string"
+,
+"tail":{
+"any-key":{
+"text"
+:
+"string"
+,
+"ts"
+:
+0
+,
+"user"
+:
+"string"
+,
+"from"
+:
+"string"
+,
+"file_name"
+:
+"string"
+,
+"image_name"
+:
+"string"
+}
+},
+"description"
+:
+"string"
+,
+"users":[
+"string"
+],
+"partner"
+:
+"string"
+,
+"partner_id"
+:
+"string"
+,
+"partner_full"
+:
+"string"
+,
+"count"
+:
+0
+,
+"dts"
+:
+0
+,
+"unread"
+:
+"string"
+,
+"user"
+:
+"string"
+,
+"uts"
+:
+0
+,
+"short_url"
+:
+"string"
+}
+]
+Метод возвращает постраничный список подписок.
+
+Важно
+
+Обратите внимание, используется новая версия метода - 1.2
+Параметры
+type
+string
+Необязательный тип подписок (channel, dialog, group, groups)
+limit
+integer
+По сколько чатов выводить на страницу
+before
+integer
+Перед каким временем обновления чата (utime) в формате unix time (микросекунды) необходимо загружать список чатов
+after
+integer
+После какого времени обновления чата (utime) в формате unix time (микросекунды) необходимо загружать список чатов
+
+Сообщения
+Получение истории сообщений
+get
+/messenger/1.1/chats/{chat_id}/history/
+Модель и примеры
+Консоль
+Запрос
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.1/chats/{chat_id}/history/' \
+  -X 'GET' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json'
+
+Ответ
+200
+список сообщения
+Модель
+[{
+channel: string
+id чата
+
+delivered: boolean
+доставлено/недоставлено
+
+stamp: string
+таймстемп (isoformat) сообщения
+
+text: string
+текст сообщения
+
+ts: integer
+таймстемп (unix) сообщения
+
+id: string
+id сообщения
+
+user: string
+id отправителя, отстутствует в системных событиях
+
+event: enum
+[join, exclude, quit, invite, create, system_message]
+тип системного события
+
+from: string
+Имя отправителя сообщения
+
+document: string
+ссылка на документ в атидоках
+
+document_mimetype: string
+document_size: integer
+file_id: string
+id загруженного в filestorage файла
+
+file_mimetype: string
+file_name: string
+file_size: integer
+}]
+Пример
+[
+{
+"channel"
+:
+"string"
+,
+"delivered"
+:
+false
+,
+"stamp"
+:
+"string"
+,
+"text"
+:
+"string"
+,
+"ts"
+:
+0
+,
+"id"
+:
+"string"
+,
+"user"
+:
+"string"
+,
+"event"
+:
+"join"
+,
+"from"
+:
+"string"
+,
+"document"
+:
+"/document/07a940594fdb4866aa9f8f48c192632d/"
+,
+"document_mimetype"
+:
+"string"
+,
+"document_size"
+:
+0
+,
+"file_id"
+:
+"string"
+,
+"file_mimetype"
+:
+"string"
+,
+"file_name"
+:
+"string"
+,
+"file_size"
+:
+0
+}
+]
+Метод возвращает постраничный список сообщений.
+
+Отправка сообщения
+post
+/messenger/1.2/chats/{chat_id}/messages
+Модель и примеры
+Консоль
+Запрос
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.2/chats/{chat_id}/messages' \
+  -X 'POST' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: multipart/form-data; boundary=boundary'
+
+Ответ
+200
+json сообщения
+Модель
+{
+channel: string
+id чата
+
+delivered: boolean
+доставлено/недоставлено
+
+stamp: string
+таймстемп (isoformat) сообщения
+
+text: string
+текст сообщения
+
+ts: integer
+таймстемп (unix) сообщения
+
+id: string
+id сообщения
+
+user: string
+id отправителя, отстутствует в системных событиях
+
+event: enum
+[join, exclude, quit, invite, create, system_message]
+тип системного события
+
+from: string
+Имя отправителя сообщения
+
+document: string
+ссылка на документ в атидоках
+
+document_mimetype: string
+document_size: integer
+file_id: string
+id загруженного в filestorage файла
+
+file_mimetype: string
+file_name: string
+file_size: integer
+}
+Пример
+{
+"channel"
+:
+"string"
+,
+"delivered"
+:
+false
+,
+"stamp"
+:
+"string"
+,
+"text"
+:
+"string"
+,
+"ts"
+:
+0
+,
+"id"
+:
+"string"
+,
+"user"
+:
+"string"
+,
+"event"
+:
+"join"
+,
+"from"
+:
+"string"
+,
+"document"
+:
+"/document/07a940594fdb4866aa9f8f48c192632d/"
+,
+"document_mimetype"
+:
+"string"
+,
+"document_size"
+:
+0
+,
+"file_id"
+:
+"string"
+,
+"file_mimetype"
+:
+"string"
+,
+"file_name"
+:
+"string"
+,
+"file_size"
+:
+0
+}
+Метод отправки сообщения. Поддерживаются текстовые сообщения, сообщения с картинкой или файлом, а также сообщения с геометкой. Одно сообщение должно содержать либо текст, либо одно вложение (картинку или файл), либо геометку.
+
+Для отправки картинки обязательно прислать одновременно image, image_height и image_width.
+
+Для отправки геометки обязательно прислать одновременно geo_longitude и geo_latitude.
+
+Получение прикреплённого к сообщению изображения
+get
+/messenger/1.2/messages/{message_id}/image
+Модель и примеры
+Консоль
+Запрос
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.2/messages/{message_id}/image' \
+  -X 'GET' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json'
+
+Ответ
+200
+Картинка, прикреплённая к сообщению
+Модель
+null
+Пример
+null
+Получение изображения, прикреплённого к сообщению. Работает только для сообщений, у которых image_id не равен null. Использовать image_id не нужно: достаточно передать идентификатор сообщения message_id.
+
+Получение прикреплённого к сообщению файла
+get
+/messenger/1.2/messages/{message_id}/file
+Модель и примеры
+Консоль
+Запрос
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.2/messages/{message_id}/file' \
+  -X 'GET' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json'
+
+Ответ
+200
+Файл, прикреплённый к сообщению
+Модель
+null
+Пример
+null
+Получение файла, прикреплённого к сообщению. Работает только для сообщений, у которых file_id не равен null. Использовать file_id не нужно: достаточно передать идентификатор сообщения message_id.
+
+Прочие методы
+Изменение настроек подписки
+post
+/messenger/1.1/chats/{chat_id}/settings/
+Изменение настроек подписки (скрыть/закрепить).
+
+Приглашение нескольких пользователей в групповой чат
+post
+/messenger/1.1/chats/{chat_id}/users/
+По умолчанию используются id-шники аккаунтов, но если флаг ati_id выставлен в true, будут использованы именно коды.
+
+Удаление сообщения из диалога
+delete
+/messenger/1.1/chats/{chat_id}/messages/{ts_or_id}/
+Удалять сообщения можно в диалогах и только если они не прочитаны собеседником. В качестве идентификатора можно использовать как непосредственно id сообщения так и его временную метку в UTC.
+
+Очистка истории
+delete
+/messenger/1.1/chats/{chat_id}/history/
+Очистить переписку можно только в диалогах, причем история изменится лишь для владельца подписки, у собеседника все останется как есть. При вызове метода в подписку добавится поле del_ts, содержащее временную метку, начиная с которой сообщения не будут возвращаться в методе history.
+
+Получение счетчика чатов с непрочитанными сообщениями
+get
+/messenger/1.1/inbox/
+Модель и примеры
+Консоль
+Запрос
+Пример запроса
+CURL
+1C
+curl 'https://api.ati.su/messenger/1.1/inbox/' \
+  -X 'GET' \
+  -H 'Authorization: Bearer {authorizationToken}' \
+  -H 'Content-Type: application/json'
+
+Ответ
+200
+Счетчик непрочитанных
+Модель
+{
+unread: integer
+}
+Пример
+{
+"unread"
+:
+0
+}
+Метод вернет количество чатов с непрочитанными сообщениями.

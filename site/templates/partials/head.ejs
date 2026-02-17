@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' — Диспетчер' : 'Диспетчер — грузоперевозки по России' %></title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Грузоперевозки по России от 200 кг. Расчёт за 2 минуты, 500+ проверенных перевозчиков, полное сопровождение.' %>">
+  <% if (typeof keywords !== 'undefined') { %><meta name="keywords" content="<%= keywords %>"><% } %>
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://ai-dispatcher.ru<%= typeof canonical !== 'undefined' ? canonical : '' %>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="Диспетчер">
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Диспетчер — грузоперевозки по России' %>">
+  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Грузоперевозки по России от 200 кг. Расчёт за 2 минуты.' %>">
+  <meta property="og:url" content="https://ai-dispatcher.ru<%= typeof canonical !== 'undefined' ? canonical : '' %>">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/public/images/favicon.svg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Onest:wght@300;400;500;600&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/public/css/style.css">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TransportationService",
+    "name": "Диспетчер",
+    "url": "https://ai-dispatcher.ru",
+    "description": "Грузоперевозки по России. Межгородние перевозки от 200 кг с полным сопровождением.",
+    "areaServed": { "@type": "Country", "name": "Россия" },
+    "serviceType": "Грузоперевозки",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": "Russian"
+    }
+  }
+  </script>
+</head>

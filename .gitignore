@@ -1,55 +1,51 @@
-# Исключаем все .md файлы кроме основной логики
-*.md
-!ОСНОВНАЯ_ЛОГИКА_ИИ_ДИСПЕТЧЕРА.md
-
-# Исключаем все .txt файлы
-*.txt
-
-# Исключаем тестовые файлы
-test_*.py
-
-# Исключаем файлы документации и примеров
-ati_api_v2_structure.json
-ati_dictionaries_new.py
-fetch_ati_dictionaries.py
-.cursorignore
-
-# Исключаем конфигурационные файлы с секретами
-config.env
-.env
+# OpenClaw
+node_modules/
 *.env
-!config.env.example
+.env
+config.env
 
-# Исключаем служебные файлы
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-venv/
-env/
-.venv/
+# Secrets
+*api_key*
+*secret*
+*credentials*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
 .idea/
 .vscode/
+.cursor/
+.cursorignore
+
+# RBAC tests (не нужны в продакшене)
+extensions/rbac/src/__tests__/
+
+# Logs
 *.log
 logs/
 
-# Исключаем временные файлы
+# Temp
 *.tmp
 *.bak
 *.swp
 *~
 
-# Исключаем файлы с ключами API
-*api_key*
-*secret*
-*token*
-*credentials*
+# Python (legacy reference)
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
 
-# Исключаем системные файлы
-.DS_Store
-Thumbs.db
-desktop.ini
+# Build
+dist/
 
-# Исключаем словари (большие файлы)
-*.ini 
+# Приватные файлы (IP, SSH, серверные детали)
+CLAUDE.md
+ОСНОВНАЯ_ЛОГИКА_ИИ_ДИСПЕТЧЕРА.md
+.claude/rules/deploy.md
+docs/deploy/deploy.sh
+docs/plans/

@@ -1,0 +1,24 @@
+{
+  "id": "ati-cargo",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiToken": {
+        "type": "string",
+        "description": "ATI.su API Bearer token"
+      },
+      "boardId": {
+        "type": "string",
+        "description": "ATI board ID for cargo publishing",
+        "default": "a0a0a0a0a0a0a0a0a0a0a0a0"
+      },
+      "monitorIntervalMs": {
+        "type": "number",
+        "description": "Polling interval for response monitoring in ms",
+        "default": 30000
+      }
+    },
+    "required": ["apiToken"]
+  }
+}
