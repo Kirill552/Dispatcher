@@ -22,6 +22,8 @@ const seenResponseIds = new Set<string>();
 const pendingResponses: CarrierResponse[] = [];
 
 // Кэш boardId и contactId (заполняется при старте)
+// Общая площадка ATI.SU — постоянный ID, не возвращается через /canAdd
+const ATI_COMMON_BOARD_ID = "a0a0a0a0a0a0a0a0a0a0a0a0";
 let cachedBoardId: string | null = null;
 let cachedContactId: string | null = null;
 
@@ -65,7 +67,7 @@ const plugin = {
 
     // --- initCache: авто-получение boardId и contactId при запуске ---
     async function initCache() {
-      // boardId: получить первую доступную площадку
+      // boardId: попробовать получить через API, fallback на общую площадку
       try {
         const resp = await fetch(`${ATI_BASE}/v2/boards/public/boards/canAdd`, {
           headers,
@@ -81,23 +83,25 @@ const plugin = {
         api.logger.warn(`ati-cargo: failed to fetch boardId: ${err}`);
       }
 
-      // Fallback на конфиг
-      if (!cachedBoardId && config.boardId) {
-        cachedBoardId = config.boardId;
+      // Fallback: конфиг → общая площадка ATI
+      if (!cachedBoardId) {
+        cachedBoardId = config.boardId || ATI_COMMON_BOARD_ID;
       }
 
       // contactId: первый видимый контакт
+      // Поле в API: is_visibled (не is_visible — особенность ATI API)
+      // contact.id может быть 0 (валидное значение)
       try {
         const resp = await fetch(`${ATI_BASE}/v1.0/firms/contacts`, { headers });
         if (resp.ok) {
           const contacts: any[] = await resp.json();
           const contact = contacts.find(
-            (c: any) => c.is_visible && !c.is_deleted
+            (c: any) => c.is_visibled && !c.is_deleted
           );
-          if (contact?.id) {
-            cachedContactId = contact.id;
-          } else if (contacts[0]?.id) {
-            cachedContactId = contacts[0].id;
+          if (contact && contact.id != null) {
+            cachedContactId = String(contact.id);
+          } else if (contacts.length > 0 && contacts[0].id != null) {
+            cachedContactId = String(contacts[0].id);
           }
         }
       } catch (err) {
@@ -268,8 +272,8 @@ const plugin = {
                 reservation_enabled: false,
               },
             ],
-            note: "",
-            contacts: [cachedContactId],
+            note: "Пишите в мессенджер АТИ, на звонки не отвечаю",
+            contacts: [Number(cachedContactId)],
           },
         };
 
