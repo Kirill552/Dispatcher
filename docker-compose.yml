@@ -36,8 +36,10 @@ services:
       - ATI_API_TOKEN=${ATI_API_TOKEN}
       - HOME=/home/node
       - NODE_PATH=/home/node/.openclaw-bin/node_modules
-    user: "node"
-    # read_only не используем: OpenClaw пишет tmp-файлы рядом с конфигом и логи
+    # Старт от root → chown → drop к node через runuser
+    # Необходимо: Docker создаёт /home/node/.openclaw как root, а OpenClaw нужно
+    # писать temp-файлы рядом с openclaw.json для atomic write (auto-enable Telegram)
+    user: "root"
     tmpfs:
       - /tmp
       - /home/node/.npm:uid=1000,gid=1000
@@ -48,7 +50,12 @@ services:
       - /home/node/.openclaw/memory:uid=1000,gid=1000
     security_opt:
       - no-new-privileges:true
-    command: ["node", "/home/node/.openclaw-bin/node_modules/openclaw/dist/index.js", "gateway", "--port", "18790", "--verbose"]
+    command:
+      - /bin/sh
+      - -c
+      - |
+        chown node:node /home/node/.openclaw
+        exec /usr/sbin/runuser -u node -- node /home/node/.openclaw-bin/node_modules/openclaw/dist/index.js gateway --port 18790 --verbose
 
   site:
     image: node:22-slim
