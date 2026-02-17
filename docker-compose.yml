@@ -4,8 +4,8 @@ services:
     container_name: openclaw-gateway
     restart: unless-stopped
     volumes:
-      # Конфиг (копия с реальным токеном, НЕ из репо)
-      - ./docker-data/openclaw.json:/home/node/.openclaw/openclaw.json:ro
+      # Конфиг (копия с реальным токеном, НЕ из репо, writable — OpenClaw пишет auto-enable)
+      - ./docker-data/openclaw.json:/home/node/.openclaw/openclaw.json
       # Workspace
       - ./workspace/SOUL.md:/home/node/.openclaw/workspace/SOUL.md:ro
       - ./workspace/AGENTS.md:/home/node/.openclaw/workspace/AGENTS.md:ro
@@ -37,7 +37,7 @@ services:
       - HOME=/home/node
       - NODE_PATH=/home/node/.openclaw-bin/node_modules
     user: "node"
-    read_only: true
+    # read_only не используем: OpenClaw пишет tmp-файлы рядом с конфигом и логи
     tmpfs:
       - /tmp
       - /home/node/.npm:uid=1000,gid=1000
