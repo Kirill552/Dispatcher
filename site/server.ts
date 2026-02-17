@@ -191,8 +191,9 @@ app.setNotFoundHandler(async (_req, reply) => {
 
 // --- Start ---
 try {
-  await app.listen({ port: PORT, host: "127.0.0.1" });
-  console.log(`Site running at http://127.0.0.1:${PORT}`);
+  const HOST = process.env.HOST || "127.0.0.1";
+  await app.listen({ port: PORT, host: HOST });
+  console.log(`Site running at http://${HOST}:${PORT}`);
 } catch (err) {
   app.log.error(err);
   process.exit(1);

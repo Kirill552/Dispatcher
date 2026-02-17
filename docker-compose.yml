@@ -61,6 +61,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - HOST=0.0.0.0
       - DOMAIN=https://ai-dispatcher.ru
     user: "node"
     working_dir: /app
