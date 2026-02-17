@@ -4,8 +4,9 @@ services:
     container_name: openclaw-gateway
     restart: unless-stopped
     volumes:
-      # Конфиг (копия с реальным токеном, НЕ из репо, writable — OpenClaw пишет auto-enable)
-      - ./docker-data/openclaw.json:/home/node/.openclaw/openclaw.json
+      # Конфиг: монтируем как read-only источник, копируется в /home/node/.openclaw/ при старте
+      # (bind-mounted файл нельзя заменить через rename — OpenClaw нужен writable конфиг)
+      - ./docker-data/openclaw.json:/config/openclaw.json:ro
       # Workspace
       - ./workspace/SOUL.md:/home/node/.openclaw/workspace/SOUL.md:ro
       - ./workspace/AGENTS.md:/home/node/.openclaw/workspace/AGENTS.md:ro
@@ -55,6 +56,8 @@ services:
       - -c
       - |
         chown node:node /home/node/.openclaw
+        cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+        chown node:node /home/node/.openclaw/openclaw.json
         exec /usr/sbin/runuser -u node -- node /home/node/.openclaw-bin/node_modules/openclaw/dist/index.js gateway --port 18790 --verbose
 
   site:
