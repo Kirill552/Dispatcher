@@ -21,6 +21,8 @@ services:
       # npm зависимости (предустановленные на хосте)
       - ./docker-data/node_modules:/home/node/.openclaw/node_modules:ro
       - ./package.json:/home/node/.openclaw/package.json:ro
+      # OpenClaw бинарник (предустановлен на хосте)
+      - ./docker-data/openclaw-bin:/home/node/.openclaw-bin:ro
       # Персистентные данные (память, сессии, lancedb)
       - openclaw-data:/home/node/.openclaw/agents/main/sessions
       - openclaw-memory:/home/node/.openclaw/workspace
@@ -33,6 +35,7 @@ services:
       - OPENAI_BASE_URL=https://openrouter.ai/api/v1
       - ATI_API_TOKEN=${ATI_API_TOKEN}
       - HOME=/home/node
+      - NODE_PATH=/home/node/.openclaw-bin/node_modules
     user: "node"
     read_only: true
     tmpfs:
@@ -40,7 +43,7 @@ services:
       - /home/node/.npm:uid=1000,gid=1000
     security_opt:
       - no-new-privileges:true
-    command: ["npx", "openclaw@latest", "gateway", "--port", "18790", "--verbose"]
+    command: ["node", "/home/node/.openclaw-bin/node_modules/openclaw/dist/index.js", "gateway", "--port", "18790", "--verbose"]
 
   site:
     image: node:22-slim

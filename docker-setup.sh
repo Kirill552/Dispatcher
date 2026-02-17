@@ -26,18 +26,31 @@ cat > docker-data/models.json << 'EOF'
 }
 EOF
 
+# OpenClaw бинарник (node:22-slim не имеет git, npx не работает)
+echo "=== 2. Установка OpenClaw в docker-data/openclaw-bin ==="
+mkdir -p docker-data/openclaw-bin
+cd docker-data/openclaw-bin
+if [ ! -f node_modules/openclaw/dist/index.js ]; then
+    npm init -y > /dev/null 2>&1
+    npm install openclaw@latest
+    echo "OpenClaw $(node -e "console.log(require('./node_modules/openclaw/package.json').version)") установлен"
+else
+    echo "OpenClaw уже установлен, пропускаю"
+fi
+cd ../..
+
 # npm зависимости для расширений
-echo "=== 2. npm install для расширений ==="
+echo "=== 3. npm install для расширений ==="
 cd docker-data
 ln -sf ../package.json package.json 2>/dev/null || true
 npm install --omit=dev
 cd ..
 
 # npm зависимости для сайта (tsx нужен для запуска — ставим все)
-echo "=== 3. npm install для сайта ==="
+echo "=== 4. npm install для сайта ==="
 cd site && npm install && cd ..
 
-echo "=== 4. .env файл ==="
+echo "=== 5. .env файл ==="
 if [ ! -f .env ]; then
     cat > .env << 'EOF'
 TELEGRAM_BOT_TOKEN=ЗАМЕНИТЬ
