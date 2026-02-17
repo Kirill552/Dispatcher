@@ -1,0 +1,72 @@
+services:
+  openclaw:
+    image: node:22-slim
+    container_name: openclaw-gateway
+    restart: unless-stopped
+    volumes:
+      # Конфиг (копия с реальным токеном, НЕ из репо)
+      - ./docker-data/openclaw.json:/home/node/.openclaw/openclaw.json:ro
+      # Workspace
+      - ./workspace/SOUL.md:/home/node/.openclaw/workspace/SOUL.md:ro
+      - ./workspace/AGENTS.md:/home/node/.openclaw/workspace/AGENTS.md:ro
+      - ./workspace/TOOLS.md:/home/node/.openclaw/workspace/TOOLS.md:ro
+      # Скиллы
+      - ./.agents/skills/dispatcher-client/SKILL.md:/home/node/.openclaw/agents/skills/dispatcher-client/SKILL.md:ro
+      - ./.agents/skills/dispatcher-admin/SKILL.md:/home/node/.openclaw/agents/skills/dispatcher-admin/SKILL.md:ro
+      # Расширения
+      - ./extensions/ati-cargo:/home/node/.openclaw/extensions/ati-cargo:ro
+      - ./extensions/rbac:/home/node/.openclaw/extensions/rbac:ro
+      # models.json
+      - ./docker-data/models.json:/home/node/.openclaw/agents/main/agent/models.json:ro
+      # npm зависимости (предустановленные на хосте)
+      - ./docker-data/node_modules:/home/node/.openclaw/node_modules:ro
+      - ./package.json:/home/node/.openclaw/package.json:ro
+      # Персистентные данные (память, сессии, lancedb)
+      - openclaw-data:/home/node/.openclaw/agents/main/sessions
+      - openclaw-memory:/home/node/.openclaw/workspace
+      - openclaw-lancedb:/home/node/.openclaw/memory-lancedb
+    ports:
+      - "127.0.0.1:18790:18790"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENAI_BASE_URL=https://openrouter.ai/api/v1
+      - ATI_API_TOKEN=${ATI_API_TOKEN}
+      - HOME=/home/node
+    user: "node"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/node/.npm:uid=1000,gid=1000
+    security_opt:
+      - no-new-privileges:true
+    command: ["npx", "openclaw@latest", "gateway", "--port", "18790", "--verbose"]
+
+  site:
+    image: node:22-slim
+    container_name: ai-dispatcher-site
+    restart: unless-stopped
+    volumes:
+      - ./site:/app:ro
+      - site-modules:/app/node_modules
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DOMAIN=https://ai-dispatcher.ru
+    user: "node"
+    working_dir: /app
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/node/.npm:uid=1000,gid=1000
+    security_opt:
+      - no-new-privileges:true
+    command: ["node", "--import", "tsx", "server.ts"]
+
+volumes:
+  openclaw-data:
+  openclaw-memory:
+  openclaw-lancedb:
+  site-modules:
