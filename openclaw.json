@@ -27,6 +27,12 @@
     "auth": {
       "mode": "token",
       "token": "GENERATE_WITH_openssl_rand_-hex_32"
+    },
+    "http": {
+      "endpoints": {
+        "chatCompletions": { "enabled": true },
+        "responses": { "enabled": true }
+      }
     }
   },
   "tools": {
@@ -92,6 +98,8 @@
               "channels": "*",
               "tools": [
                 "ati_city_search",
+                "ati_detect_payment_type",
+                "ati_mock_status",
                 "ati_create_cargo",
                 "ati_check_responses",
                 "ati_get_new_responses",
@@ -99,7 +107,8 @@
                 "memory_search",
                 "tenant_save",
                 "tenant_recall",
-                "analytics_log"
+                "analytics_log",
+                "telegram_notify"
               ]
             }
           },
@@ -117,6 +126,21 @@
             "guestHelp": "🚛 Я — диспетчер грузоперевозок по России!\n\n📦 Принимаю грузы от 200 кг\n🗺️ Межгород по всей России\n⏱ Подбор перевозчика за 15-30 минут\n\nПросто напишите что и куда нужно перевезти — или отправьте голосовое сообщение!",
             "blockResponse": "🚛 Я — диспетчер грузоперевозок!\n\nЭта команда мне не знакома. Просто напишите что и куда нужно перевезти — я помогу найти перевозчика и рассчитать стоимость 📦"
           }
+        }
+      },
+      "lead-pipeline": {
+        "enabled": true,
+        "config": {
+          "vkToken": "${VK_COMMUNITY_TOKEN}",
+          "vkGroupIds": [],
+          "telegramBotToken": "${TELEGRAM_BOT_TOKEN}",
+          "notifyUserId": "408001372",
+          "botUsername": "${TELEGRAM_BOT_USERNAME}",
+          "sheetsId": "${GOOGLE_SHEETS_ID}",
+          "sheetsServiceAccountJson": "${GOOGLE_SERVICE_ACCOUNT_JSON}",
+          "openrouterApiKey": "${OPENROUTER_API_KEY}",
+          "pollIntervalMs": 300000,
+          "vkCommentDailyLimit": 20
         }
       }
     }
