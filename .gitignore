@@ -8,6 +8,8 @@ config.env
 *api_key*
 *secret*
 *credentials*
+*service_account*
+claude-sheets-access-*.json
 
 # OS
 .DS_Store
@@ -32,6 +34,7 @@ logs/
 *.bak
 *.swp
 *~
+reference/tmp/
 
 # Python (legacy reference)
 __pycache__/

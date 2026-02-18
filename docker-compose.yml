@@ -17,6 +17,7 @@ services:
       # Расширения
       - ./extensions/ati-cargo:/home/node/.openclaw/extensions/ati-cargo:ro
       - ./extensions/tenant-memory:/home/node/.openclaw/extensions/tenant-memory:ro
+      - ./extensions/lead-pipeline:/home/node/.openclaw/extensions/lead-pipeline:ro
       # RBAC берётся из форка (совместим с патчами ядра)
       # models.json
       - ./docker-data/models.json:/home/node/.openclaw/agents/main/agent/models.json:ro
@@ -37,6 +38,10 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENAI_BASE_URL=https://openrouter.ai/api/v1
       - ATI_API_TOKEN=${ATI_API_TOKEN}
+      - VK_COMMUNITY_TOKEN=${VK_COMMUNITY_TOKEN}
+      - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+      - GOOGLE_SHEETS_ID=${GOOGLE_SHEETS_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
       - HOME=/home/node
       - NODE_PATH=/home/node/.openclaw-fork/node_modules
     # Старт от root → chown → drop к node через runuser
