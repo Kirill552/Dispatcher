@@ -29,6 +29,40 @@ import {
   isAdminByTools,
 } from "./src/command-guard.js";
 
+function sanitizeOutgoingUserText(content: string): { text: string; changed: boolean } {
+  if (!content.trim()) {
+    return { text: content, changed: false };
+  }
+
+  const filtered = content
+    .split(/\r?\n/)
+    .filter((line) => {
+      const lower = line.trim().toLowerCase();
+      if (!lower) return true;
+      if (lower.includes("[system message]")) return false;
+      if (lower.includes("[action needed]")) return false;
+      if (lower.includes("role \"guest\" does not have access to tool")) return false;
+      if (lower.includes("unable to submit request because thought signature is not valid")) return false;
+      if (lower.includes("provider returned error")) return false;
+      return true;
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  if (filtered === content.trim()) {
+    return { text: content, changed: false };
+  }
+  if (!filtered) {
+    return {
+      text: "Понял. Передаю вопрос менеджеру, скоро вернусь с ответом.",
+      changed: true,
+    };
+  }
+
+  return { text: filtered, changed: true };
+}
+
 const rbacPlugin = {
   id: "rbac",
   name: "RBAC (Role-Based Access Control)",
@@ -122,6 +156,26 @@ const rbacPlugin = {
         }
       },
       { priority: 100 },
+    );
+
+    // ---------------------------------------------------------------
+    // Outgoing sanitizer: не отдавать клиенту служебные/технические строки
+    // ---------------------------------------------------------------
+    api.on(
+      "message_sending",
+      (event, ctx) => {
+        if (typeof event.content !== "string") return;
+        const sanitized = sanitizeOutgoingUserText(event.content);
+        if (!sanitized.changed) return;
+
+        if (config.logBlocked) {
+          api.logger.warn(
+            `rbac: sanitized outgoing message peer="${event.to ?? "unknown"}" channel="${ctx.channelId ?? "unknown"}"`,
+          );
+        }
+        return { content: sanitized.text };
+      },
+      { priority: 90 },
     );
 
     // ---------------------------------------------------------------

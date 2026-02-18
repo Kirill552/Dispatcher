@@ -1,7 +1,8 @@
 # ATI.su API v2 -- Полный справочник
 
-> Составлено 2026-02-17 из официальной документации https://ati.su/developers/
+> Составлено 2026-02-17, обновлено 2026-02-17 из официальной документации https://ati.su/developers/
 > Базовый URL: `https://api.ati.su`
+> Источник: ati.su/developers/api/webhooks/, ati.su/developers/usecases/cargoowner/addload/, ati.su/developers/api/loads/
 
 ---
 
@@ -415,43 +416,60 @@ POST /v2/cargos
 
 **Лимит:** макс 500 запросов на создание за 24 часа на один контакт. Сброс в 00:00 UTC.
 
-**Request Body:** объект `cargo_application`:
+**Request Body:** полная структура `cargo_application` (поля со звёздочкой обязательны):
 
 ```json
 {
   "cargo_application": {
     "external_id": "ORDER-12345",
+    "note": "Примечание к грузу (макс 1000 символов)",
+    "contacts": [123456],
     "route": {
       "loading": {
-        "location": { "type": "manual" },
-        "city_id": 36942,
-        "address": "ул. Ленина, 1"
+        "location": {
+          "type": "manual",
+          "city_id": 36942,
+          "address": "ул. Ленина, 1",
+          "coordinates": { "longitude": 37.6173, "latitude": 55.7558 }
+        },
+        "near_cities": [],
+        "dates": {
+          "type": "ready",
+          "time": { "type": "round-the-clock" }
+        },
+        "cargos": [
+          {
+            "id": 1,
+            "name": "Стройматериалы",
+            "weight": { "type": "tons", "quantity": 20.0 },
+            "volume": { "quantity": 82.0 },
+            "packaging": { "type": 1, "quantity": 10 },
+            "sizes": {
+              "length": { "value": 13.6, "is_highlighted": false },
+              "width": { "value": 2.45, "is_highlighted": false },
+              "height": { "value": 2.7, "is_highlighted": false }
+            }
+          }
+        ]
       },
       "unloading": {
-        "location": { "type": "manual" },
-        "city_id": 36159,
-        "address": "ул. Мира, 5"
+        "location": {
+          "type": "manual",
+          "city_id": 36159,
+          "address": "ул. Мира, 5"
+        },
+        "near_cities": []
       },
-      "way_points": []
-    },
-    "cargo": {
-      "name": "Стройматериалы",
-      "weight": { "value": 20, "unit": "t" },
-      "volume": { "value": 82 },
-      "packaging": { "type_id": 1, "quantity": 10 },
-      "sizes": {
-        "length": 13.6,
-        "width": 2.45,
-        "height": 2.7
-      }
+      "way_points": [],
+      "is_round_trip": false
     },
     "truck": {
       "trucks_count": 1,
       "load_type": "ftl",
       "body_types": [1, 2],
-      "body_loading": { "type_ids": [1, 2] },
-      "body_unloading": { "type_ids": [1] },
-      "temperature": { "min": -20, "max": -18 },
+      "body_loading": { "types": [1, 2], "is_all_required": false },
+      "body_unloading": { "types": [1], "is_all_required": false },
+      "temperature": { "from": -20, "to": -18 },
       "documents": {
         "tir": false,
         "cmr": false,
@@ -466,105 +484,191 @@ POST /v2/cargos
       "adr": 0,
       "belts_count": 0,
       "is_tracking": false,
-      "required_capacity": 20
+      "required_capacity": 20.0
     },
     "payment": {
       "type": "with-bargaining",
+      "hide_counter_offers": false,
+      "direct_offer": false,
       "currency_type": 32,
-      "rate_with_vat": 150000,
-      "rate_without_vat": 125000,
-      "cash": 0,
-      "payment_mode": "on-unloading",
+      "rate_with_vat": 150000.0,
+      "rate_without_vat": 125000.0,
+      "cash": 0.0,
+      "on_card": false,
+      "payment_mode": {
+        "type": "on-unloading"
+      },
       "prepayment": {
         "percent": 0,
-        "fuel": false
+        "using_fuel": false
       }
     },
     "boards": [
       {
         "id": "507f1f77bcf86cd799439011",
         "publication_mode": "now",
+        "cancel_publish_on_auction_bet": false,
         "reservation_enabled": true
       }
     ],
-    "contacts": [123456],
-    "note": "Примечание к грузу (макс 1000 символов)",
     "documents": []
   }
 }
 ```
 
-### Основные поля cargo_application
+### Структура полей cargo_application
 
-#### Route (маршрут)
+#### Метаданные
+
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| external_id | string (макс 250) | нет | Внешний номер груза/заказа |
+| note | string (макс 1000) | нет | Примечание к грузу |
+| contacts | int32[] | да | ID контактов |
+
+#### Route.loading / unloading — location
+
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| location.type | string | да | "manual" или "organization" |
+| location.city_id | int32 | да (nullable) | ID из словаря городов |
+| location.address | string (макс 200) | нет | Адрес; обязателен для Москвы/СПБ и при совпадении городов |
+| location.coordinates.longitude | double | да (nullable) | -180..180 |
+| location.coordinates.latitude | double | да (nullable) | -90..90 |
+| location.organization_id | uuid | да (nullable) | Для type="organization" |
+| location.address_id | uuid | да (nullable) | Для type="organization" |
+| near_cities | int32[] | нет | Ближайшие города (макс 10) |
+
+#### Route.loading.dates
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| route.loading | object | Пункт погрузки |
-| route.unloading | object | Пункт выгрузки |
-| route.way_points | array | Промежуточные точки (loading/unloading/customs/passthrough) |
+| dates.type | string | "ready" / "from-date" / "permanent" / "rate-request" |
+| dates.time.type | string | "round-the-clock" / "bounded" |
+| dates.time.start | HH:mm | Для bounded: с |
+| dates.time.end | HH:mm | Для bounded: по |
+| dates.time.offset | +HH:mm | Часовой пояс |
 
-Каждый пункт:
-- `location.type` -- "manual" или "organization"
-- `city_id` -- ID города из справочника
-- Координаты: longitude (-180..180), latitude (-90..90)
-- `address` -- адрес
-- Даты и время загрузки/выгрузки
+#### Route.loading.cargos[] (массив, каждый груз)
 
-#### Cargo (груз)
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| id | int32 | да | Порядковый номер в заявке |
+| name | string (макс 200) | да | Наименование груза |
+| weight.type | string | нет | "tons" / "kilos" |
+| weight.quantity | double | да | Вес (мин 10 кг, макс 9999 т) |
+| volume.quantity | double | да | Объём в м3 |
+| packaging.type | int32 | нет | ID из словаря packTypes |
+| packaging.quantity | int32 | нет | Количество мест |
+| sizes.length.value | double | нет | Длина |
+| sizes.length.is_highlighted | bool | да | Выделение в поиске |
+| sizes.width.value | double | нет | Ширина |
+| sizes.height.value | double | нет | Высота |
+| sizes.diameter | double (nullable) | нет | Диаметр |
+
+#### Route.way_points[] (промежуточные точки, макс 15)
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| name | string | Наименование, макс 200 символов |
-| weight.value | number | Вес (мин 10 кг, макс 9999 т) |
-| weight.unit | string | "t" (тонны) или "kg" (килограммы) |
-| volume.value | number | Объем в м3 |
-| packaging.type_id | int | ID типа упаковки из словаря |
-| packaging.quantity | int | Количество мест |
-| sizes | object | Длина, ширина, высота, диаметр |
+| type | string | "loading" / "unloading" / "customs" / "go-through" |
+| location | object | Аналогично loading.location |
 
 #### Truck (требования к транспорту)
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| trucks_count | int | Количество машин |
-| load_type | string | "ftl" (полная загрузка) или "dont-care" |
-| body_types | int[] | ID типов кузова из словаря |
-| body_loading.type_ids | int[] | Типы погрузки |
-| body_unloading.type_ids | int[] | Типы выгрузки |
-| temperature | object | min/max для рефрижератора |
-| documents.tir | bool | Требуется TIR |
-| documents.cmr | bool | Требуется CMR |
-| documents.t1 | bool | Требуется T1 |
-| documents.medical_card | bool | Мед. книжка |
-| adr | int | Класс опасности 0-9 |
-| belts_count | int | Количество ремней |
-| is_tracking | bool | Отслеживание через АТИ Водитель |
-| required_capacity | number | Требуемая грузоподъемность |
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| trucks_count | int32 (1-99) | да | Количество машин |
+| load_type | string | да | "ftl" (отдельная машина) / "dont-care" |
+| body_types | int32[] | да | ID типов кузова из словаря carTypes |
+| body_loading.types | int32[] | нет | Типы погрузки из словаря |
+| body_loading.is_all_required | bool | да | Все типы обязательны |
+| body_unloading.types | int32[] | нет | Типы выгрузки из словаря |
+| body_unloading.is_all_required | bool | да | Все типы обязательны |
+| temperature.from | int32 | нет | Мин температура (рефрижератор) |
+| temperature.to | int32 | нет | Макс температура |
+| documents.tir | bool | да | Требуется TIR |
+| documents.cmr | bool | да | Требуется CMR |
+| documents.t1 | bool | да | Требуется T1 |
+| documents.medical_card | bool | да | Требуется медкнижка |
+| requirements.logging_truck | bool | да | Лесовоз |
+| requirements.road_train | bool | да | Автопоезд |
+| requirements.air_suspension | bool | да | Пневмоподвеска |
+| adr | int32 (0-9) | нет | Класс опасности ADR |
+| belts_count | int32 | нет | Количество ремней |
+| is_tracking | bool | да | Отслеживание через АТИ Водитель |
+| required_capacity | double | нет | Грузоподъёмность, тонн |
 
-#### Payment (оплата)
+#### Payment (оплата) — тип "with-bargaining" / "without-bargaining"
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| type | string | "with-bargaining", "without-bargaining", "rate-request", "auction" |
-| currency_type | int | ID валюты из словаря |
-| rate_with_vat | number | Ставка с НДС |
-| rate_without_vat | number | Ставка без НДС |
-| cash | number | Наличные |
-| payment_mode | string | "on-unloading" или "delayed-payment" |
-| prepayment.percent | number | Процент предоплаты |
-| prepayment.fuel | bool | Топливная предоплата |
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| type | string | да | "with-bargaining" / "without-bargaining" / "rate-request" / "auction" |
+| hide_counter_offers | bool | нет | Скрыть встречные предложения |
+| direct_offer | bool | нет | Только прямые приглашения |
+| currency_type | int32 | нет | ID валюты из словаря currencyTypes |
+| rate_with_vat | double | нет | Ставка с НДС |
+| rate_without_vat | double | нет | Ставка без НДС |
+| cash | double | нет | Наличные |
+| on_card | bool | нет | Оплата на карту |
+| payment_mode.type | string | да | "on-unloading" / "delayed-payment" |
+| payment_mode.payment_delay_days | int32 | нет | Дней отсрочки (для delayed-payment) |
+| prepayment.percent | int32 | нет | Процент предоплаты |
+| prepayment.using_fuel | bool | да | Топливная предоплата |
+
+#### Payment — тип "auction" (Торги)
+
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| accept_bids_with_vat | bool | да | Принимать ставки с НДС |
+| accept_bids_without_vat | bool | нет | Принимать ставки без НДС |
+| vat_percents | int32 | нет | Процент НДС |
+| start_rate | double | да | Начальная ставка |
+| auction_currency_type | int32 | да | ID валюты |
+| bid_step | double | да | Шаг ставки |
+| is_antisniper | bool | нет | Антиснайпер |
+| time_to_provide_documents | HH:mm | да | Срок на предоставление документов |
+| winner_criteria | string | да | "best-rate" / "matching-date" |
+| auction_duration.fixed_duration | string | нет | "30m"/"1h"/"2h"/"3h"/"4h"/"6h"/"12h"/"1d"/"2d"/"3d"/"4d"/"5d" |
+| auction_duration.count_from_first_bid | bool | нет | Отсчёт с первой ставки |
+| auction_duration.finish_until | datetime | нет | Альтернатива fixed_duration |
+| no_winner_end_options.type | string | да | "archive"/"publish-with-rate"/"publish-rate-request" |
 
 #### Boards (площадки публикации)
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| id | string | ID площадки (24 символа) |
-| publication_mode | string | "now", "15m", "30m", "1h", "3h", "6h", "exact-time" |
-| publication_time | datetime | Время публикации (для exact-time) |
-| reservation_enabled | bool | Разрешено бронирование |
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| id | string | да | ID площадки (строка) |
+| publication_mode | string | да | "now"/"15m"/"30m"/"1h"/"3h"/"6h"/"exact-time" |
+| publication_time | datetime | нет | Требуется для "exact-time" |
+| cancel_publish_on_auction_bet | bool | нет | Снять с публикации при ставке |
+| reservation_enabled | bool | нет | Разрешить бронирование |
 
 ### Response 200
+
+Возвращает все поля запроса плюс серверные метаданные:
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| cargo_application_id | uuid | ID груза |
+| snapshot_id | int64 | Версия записи (меняется при каждом редактировании) |
+| cargo_application_number | string | Автогенерированный номер (напр. "АВТ-123456") |
+| department_id | int32 | Подразделение-владелец |
+| persistent_user_id | int32 | ID создавшего пользователя |
+| actor_contact_id | int32 (nullable) | ID контакта, разместившего груз |
+| added_at | datetime (UTC) | Время создания |
+| updated_at | datetime (UTC) | Время последнего изменения |
+| refreshed_at | datetime (UTC) | Время последнего обновления (bump) |
+| origin_source | string | Источник: "web-cargos-api"/"mobile-cargos-api"/"internal-cargos-api"/"public-cargos-api"/"csv_import"/"pass-through"/"unknown" |
+| application_contacts | {id}[] | Массив контактов заявки |
+| lot_id | uuid (nullable) | ID лота (если сгруппировано) |
+| lot_number | int32 | Номер лота |
+| is_pass_through_copy | bool | Сквозная копия |
+| is_archived | bool | Статус архива |
+| archive_date | datetime (nullable) | Дата архивации |
+| boards[].is_published | bool | Подтверждение публикации на площадке |
+| documents[].name | string | Имя файла |
+| documents[].link | string | URL для скачивания |
+| auction_id | uuid | ID торга (только если type="auction") |
 
 ```json
 {
@@ -574,22 +678,28 @@ POST /v2/cargos
     "snapshot_id": 1,
     "department_id": 100,
     "persistent_user_id": 42,
+    "actor_contact_id": 123456,
     "added_at": "2026-02-17T10:00:00Z",
     "updated_at": "2026-02-17T10:00:00Z",
     "refreshed_at": "2026-02-17T10:00:00Z",
-    "origin_source": "api",
-    "route": { "...": "полные данные маршрута" },
+    "origin_source": "public-cargos-api",
+    "route": { "...": "полные данные маршрута (аналогично запросу)" },
     "truck": { "...": "параметры транспорта" },
     "payment": { "...": "параметры оплаты" },
     "boards": [
       {
         "id": "507f1f77bcf86cd799439011",
-        "status": "published"
+        "is_published": true,
+        "publication_mode": "now"
       }
     ],
+    "application_contacts": [{ "id": 123456 }],
     "documents": [],
     "is_archived": false,
-    "archive_date": null
+    "archive_date": null,
+    "lot_id": null,
+    "lot_number": 0,
+    "is_pass_through_copy": false
   }
 }
 ```
@@ -648,12 +758,31 @@ POST /v1.0/loads  (deprecated)
 ### Обязательные поля
 
 - Минимум один контакт (contacts)
-- Города погрузки и выгрузки (city_id)
-- Вес или объем груза
-- ID типа груза
-- ID типов кузова
-- Тип оплаты и валюта
-- Минимум одна площадка
+- Города погрузки и выгрузки (route.loading.location.city_id, route.unloading.location.city_id)
+- Тип локации (location.type = "manual" или "organization")
+- Тип даты погрузки (route.loading.dates.type)
+- Тип времени погрузки (route.loading.dates.time.type)
+- Груз (route.loading.cargos[]): name, weight.quantity, volume.quantity
+- Количество машин (truck.trucks_count, диапазон 1-99)
+- Тип загрузки (truck.load_type = "ftl" или "dont-care")
+- Типы кузова (truck.body_types[])
+- Тип оплаты (payment.type)
+- Минимум одна площадка (boards[].id + boards[].publication_mode)
+
+### Что изменилось в v2 vs v1
+
+| Аспект | v1.0 (устаревший) | v2 (актуальный) |
+|--------|------------------|-----------------|
+| Эндпоинт создания | POST /v1.0/loads | POST /v2/cargos |
+| Структура запроса | Плоская, много полей в корне | Иерархическая через cargo_application |
+| Данные о грузе | Отдельные поля Weight, Volume на верхнем уровне | Внутри route.loading.cargos[] |
+| Маршрут | Отдельные поля FromCity, ToCity | Объект route с loading/unloading/way_points |
+| Тип даты | DateType (числовой enum) | Строковый enum: "ready"/"from-date"/"permanent"/"rate-request" |
+| Идентификатор груза | cargo_id (uuid) | cargo_application_id (uuid) |
+| Номер груза | cargo_number | cargo_application_number |
+| Источник API | source (int32) | origin_source (string) |
+| Контакты | contacts (int32[]) | application_contacts ({id}[]) |
+| Обновление | PUT /v1.0/loads/{loadId}/renew | PUT /v2/cargos/{cargo_application_id} |
 
 ---
 
@@ -666,46 +795,51 @@ GET /v1.0/loads/new/{loadId}/responses
 ```
 
 **Параметры запроса:**
-- `loadId` -- ID груза (обязательный)
-- `dateFrom` -- UTC timestamp для фильтрации (опциональный)
+- `loadId` -- ID груза (обязательный, путь)
+- `dateFrom` -- UTC datetime для фильтрации по дате (опциональный, query)
 
-**Response 200:** массив встречных предложений:
-```json
-[
-  {
-    "ResponseId": "guid",
-    "FirmId": 123456,
-    "FirmName": "ООО Перевозки",
-    "Price": 50000,
-    "CurrencyId": 32,
-    "NdsPrice": 60000,
-    "NdsCurrencyId": 32,
-    "NotNdsPrice": 50000,
-    "NotNdsCurrencyId": 32,
-    "LoadingDate": "2026-02-20T00:00:00Z",
-    "PayAttributes": 3,
-    "IsOutdated": false,
-    "FirmInfo": {
-      "TotalScore": 7.5,
-      "StatusType": "green"
-    },
-    "Contact": {
-      "Name": "Иван Иванов",
-      "Phone": "+79001234567",
-      "Email": "ivan@example.com"
-    },
-    "CounterOfferSource": "search_page"
-  }
-]
+**cURL:**
+```bash
+curl 'https://api.ati.su/v1.0/loads/new/{loadId}/responses' \
+  -X GET \
+  -H 'Authorization: Bearer {token}' \
+  -H 'Content-Type: application/json'
 ```
 
+**Response 200:** массив встречных предложений:
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| ResponseId | guid | ID встречного предложения |
+| LoadId | guid | ID груза |
+| LoadNumber | string | Номер груза |
+| LoadFirmId | int32 | ID фирмы-грузовладельца |
+| FirmId | int32 | ID фирмы-перевозчика |
+| FirmName | string | Название фирмы перевозчика |
+| ContactId | int32 | ID контакта, сделавшего предложение |
+| AddedAt | datetime | Дата добавления |
+| UpdatedAt | datetime | Дата изменения |
+| Price | decimal | Ставка (наличные) |
+| CurrencyId | int32 | Валюта |
+| NdsPrice | decimal | Ставка с НДС |
+| NdsCurrencyId | int32 | Валюта ставки с НДС |
+| NotNdsPrice | decimal | Ставка без НДС |
+| NotNdsCurrencyId | int32 | Валюта ставки без НДС |
+| LoadingDate | datetime | Предлагаемая дата погрузки |
+| PayAttributes | int32 | Побитовые флаги способов оплаты |
+| CounterOfferSource | string | Источник: "search_page"/"mobile"/"integrator"/"auction_page" |
+| FirmInfo.TotalScore | double | Рейтинг фирмы (0-8 звёзд) |
+| FirmInfo.StatusType | string | Статус паспорта: "gray"/"red"/"yellow"/"green" |
+
 **PayAttributes (побитовые флаги):**
-- Наличные
-- Безнал
-- Экспресс-доставка
-- С НДС
-- Предоплата
-- Оплата по выгрузке
+| Бит | Значение |
+|-----|----------|
+| 0x01 | Наличные |
+| 0x02 | Безнал |
+| 0x04 | Безнал с НДС |
+| 0x08 | Безнал без НДС |
+| 0x10 | Предоплата |
+| 0x20 | Оплата по выгрузке |
 
 ### Метод 2: Все встречные предложения фирмы
 
@@ -1741,6 +1875,39 @@ GET /webhooks/v1/distributions/failed/{id}?since=2026-02-01T00:00:00Z
 3. При успехе статус меняется на `active`
 4. При неудаче -- детали ошибки (TLS, socket, несовпадение challenge)
 
+### Аутентификация входящих запросов (HMAC-SHA-256)
+
+ATI.SU подписывает каждый POST-запрос к вебхуку. Необходимо верифицировать подпись.
+
+**Алгоритм верификации:**
+
+1. Получить ключ вебхука через `GET /webhooks/v1/status/{id}`, поле `hook.key`
+2. Составить строку подписания:
+   ```
+   <метод><путь_и_запрос><дата>;<digest>;<host>:<port>
+   ```
+   Пример:
+   ```
+   POST/webhook?topic=ordersThu, 01 Jan 1970 00:00:00 GMT;sha-256=SypZnuCTiysyLuUz9DOYckaU/vf0zrzdxKL1j/sHemg=;example.org:443
+   ```
+3. Применить HMAC-SHA-256 с ключом вебхука
+4. Сравнить результат (base64) с полем `Signature` из заголовка `Authorization`
+
+**Входящие заголовки от ATI.SU:**
+```
+Authorization: HMAC-SHA-256 Credential=6447f577905114d5b9b2c618&SignedHeaders=Date;Digest;Host&Signature=V8CpKji2ysF5h5VVerhcq/GMQGxoHwf0EcGiDIL41e0=
+Date: Thu, 01 Jan 1970 00:00:00 GMT
+Digest: sha-256=<base64-sha256-тела>
+Host: example.org:443
+ATI-Is-Retry: true  (только для повторных попыток)
+```
+
+| Параметр Authorization | Описание |
+|-----------------------|----------|
+| Credential | ID ключа вебхука |
+| SignedHeaders | Заголовки, включённые в подпись (всегда: Date;Digest;Host) |
+| Signature | HMAC-SHA-256 от строки подписания, base64 |
+
 ### Формат доставки сообщений
 
 ATI.SU отправляет POST на callback:
@@ -1752,19 +1919,22 @@ ATI.SU отправляет POST на callback:
     {
       "entity_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "action_date": "2026-02-17T10:00:00Z",
-      "entity": { "...": "данные объекта" }
+      "entity": { "...": "данные объекта (null при удалении)" }
     }
   ],
   "is_retry": false
 }
 ```
 
-**Заголовки:**
-- `Authorization` -- HMAC-SHA-256 подпись
-- `ATI-Is-Retry` -- true для повторных доставок
-- `Digest` -- SHA-256 хеш тела
+**Обязательные заголовки входящего запроса:**
+- `Authorization: HMAC-SHA-256 ...` -- подпись (верифицировать!)
+- `ATI-Is-Retry: true/false` -- флаг повторной доставки
+- `Digest: sha-256=...` -- SHA-256 хеш тела
 
 **Ожидаемый ответ:** HTTP 2xx в течение 20 секунд.
+**Специальные коды ответа:**
+- `429` с `Retry-After` -- ATI.SU сделает паузу (максимум 1 день)
+- `410 Gone` -- ATI.SU удалит вебхук навсегда
 
 ### Повторные попытки и деактивация
 
@@ -1776,16 +1946,29 @@ ATI.SU отправляет POST на callback:
 
 ### Доступные темы подписки
 
-| Тема | Описание |
-|------|----------|
-| `cargoes` | Грузы |
-| `cargoes.on_boards` | Грузы на площадках |
-| `orders` | Заказы |
-| `orders-invites` | Персональные приглашения |
-| `auctions` | Торги |
-| `auctions.on_boards` | Торги на площадках |
-| `autopark` | Автопарк |
-| `drivers` | Водители |
+| Тема | subscription_type | Описание |
+|------|:-----------------:|----------|
+| `cargoes` | normal | Свои грузы (события по грузам аккаунта) |
+| `cargoes.on_boards` | complex | Чужие грузы на доступных площадках |
+| `orders` | normal | Свои заказы |
+| `orders-invites` | normal | Персональные приглашения (от грузовладельца) |
+| `auctions` | normal | Свои торги |
+| `auctions.on_boards` | complex | Чужие торги на доступных площадках |
+| `autopark` | normal | Автопарк (ТС) |
+| `drivers` | normal | Водители |
+
+**Для complex-подписок** нужно передавать `subscription`:
+```json
+{
+  "subscription_type": "complex",
+  "topic": "cargoes.on_boards",
+  "callback": "https://example.com/webhook",
+  "subscription": {
+    "channel": "cargoes.on_boards",
+    "boards": ["507f1f77bcf86cd799439011", "507f1f77bcf86cd799439012"]
+  }
+}
+```
 
 ---
 
@@ -1870,6 +2053,47 @@ ATI.SU отправляет POST на callback:
 }
 ```
 
+### Полная модель entity для темы "cargoes"
+
+| Поле | Тип | Обязательное | Описание |
+|------|-----|:---:|----------|
+| cargo_application_id | uuid | да | ID груза |
+| snapshot_id | int64 | да | Версия (меняется при каждом редактировании) |
+| cargo_application_number | string | да | Автогенерированный номер |
+| department_id | int32 | да | Подразделение-владелец |
+| persistent_user_id | int32 | да | ID пользователя, разместившего груз |
+| actor_contact_id | int32 (nullable) | нет | Контакт-исполнитель |
+| external_id | string (nullable) | нет | Внешний номер |
+| added_at | datetime | да | Дата создания (UTC) |
+| updated_at | datetime | да | Дата изменения (UTC) |
+| refreshed_at | datetime | да | Дата обновления (UTC) |
+| origin_source | string | да | Источник API |
+| route | object | да | Маршрут: loading, unloading, way_points |
+| truck | object | да | Требования к транспорту |
+| payment | object | да | Параметры оплаты |
+| boards | array | да | Площадки публикации |
+| documents | array | да | Файлы и фото |
+| application_contacts | array | да | Контакты заявки |
+| note | string (nullable) | нет | Примечание |
+| paid_features | object (nullable) | нет | Платные услуги |
+| lot_id | uuid (nullable) | нет | Связанный лот |
+| lot_number | int32 (nullable) | нет | Номер лота |
+| is_pass_through_copy | bool (nullable) | нет | Сквозная копия |
+| is_archived | bool (nullable) | нет | Архивирован |
+| archive_date | datetime (nullable) | нет | Дата архивации |
+
+**При удалении груза** поле `entity` = `null`, `entity_id` содержит ID удалённого груза.
+
+### Устаревшие поля в теме "cargoes" (deprecated)
+
+| Устаревшее поле | Актуальная замена |
+|----------------|-----------------|
+| cargo_id | cargo_application_id |
+| cargo_number | cargo_application_number |
+| source | origin_source |
+| contacts | application_contacts |
+| distance | (убрано) |
+
 ### Основные секции payload
 
 | Секция | Содержимое |
@@ -1877,10 +2101,10 @@ ATI.SU отправляет POST на callback:
 | Идентификаторы | cargo_application_id, number, snapshot_id |
 | Метаданные | department_id, persistent_user_id, timestamps |
 | Маршрут | Погрузка, выгрузка, промежуточные точки, круговой маршрут |
-| Груз | Вес, объем, габариты, упаковка |
+| Груз | Вес, объем, габариты, упаковка (в loading.cargos[]) |
 | Транспорт | Кол-во машин, тип загрузки, кузова, температура, документы |
 | Оплата | Тип, валюта, ставки (с/без НДС, нал), предоплата |
-| Площадки | ID площадки, статус публикации |
+| Площадки | ID площадки, статус публикации is_published |
 
 ---
 

@@ -16,6 +16,11 @@
         "type": "number",
         "description": "Polling interval for response monitoring in ms",
         "default": 30000
+      },
+      "mockMode": {
+        "type": "boolean",
+        "description": "Тестовый режим: не публиковать реальные грузы в ATI, возвращать локальные mock-ответы",
+        "default": false
       }
     },
     "required": ["apiToken"]

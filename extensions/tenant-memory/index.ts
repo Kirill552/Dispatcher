@@ -359,6 +359,176 @@ const plugin = {
       },
     });
 
+    // --- telegram_notify: уведомление владельца в Telegram --- 
+    api.registerTool({
+      name: "telegram_notify",
+      label: "Telegram Notify Owner",
+      description:
+        "Отправляет служебное уведомление владельцу (adminUserId) в Telegram. Используй для эскалаций, негатива, техпроблем и закрытых сделок.",
+      parameters: Type.Object({
+        text: Type.String({
+          description: "Короткий текст уведомления для владельца.",
+        }),
+        severity: Type.Optional(
+          Type.Union([
+            Type.Literal("info"),
+            Type.Literal("warning"),
+            Type.Literal("escalation"),
+            Type.Literal("deal"),
+            Type.Literal("negative"),
+            Type.Literal("technical"),
+            Type.Literal("test"),
+          ])
+        ),
+        correlation_id: Type.Optional(
+          Type.String({
+            description: "Идентификатор корреляции для e2e и трассировки.",
+          })
+        ),
+        user_id: Type.Optional(
+          Type.String({
+            description: "Telegram user_id клиента (если есть).",
+          })
+        ),
+        route: Type.Optional(
+          Type.String({
+            description: "Маршрут, например: Москва → Казань.",
+          })
+        ),
+      }),
+      async execute(_toolCallId, params) {
+        const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim();
+        if (!botToken) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    sent: false,
+                    error: "TELEGRAM_BOT_TOKEN is not configured",
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        const severity = params.severity || "info";
+        const prefixBySeverity: Record<string, string> = {
+          info: "ℹ️ [INFO]",
+          warning: "⚠️ [WARN]",
+          escalation: "🚨 [ESCALATION]",
+          deal: "✅ [DEAL]",
+          negative: "🧯 [NEGATIVE]",
+          technical: "🛠 [TECH]",
+          test: "🧪 [E2E]",
+        };
+        const prefix = prefixBySeverity[severity] || prefixBySeverity.info;
+
+        const details: string[] = [];
+        if (params.user_id) details.push(`Клиент: ${params.user_id}`);
+        if (params.route) details.push(`Маршрут: ${params.route}`);
+        if (params.correlation_id) details.push(`corr: ${params.correlation_id}`);
+
+        const messageLines = [`${prefix} ${params.text}`];
+        if (details.length > 0) {
+          messageLines.push("");
+          messageLines.push(...details);
+        }
+
+        try {
+          const resp = await fetch(
+            `https://api.telegram.org/bot${botToken}/sendMessage`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                chat_id: ADMIN_USER_ID,
+                text: messageLines.join("\n"),
+                disable_web_page_preview: true,
+              }),
+            }
+          );
+
+          const raw = await resp.text();
+          let parsed: any = null;
+          try {
+            parsed = raw ? JSON.parse(raw) : null;
+          } catch {
+            parsed = null;
+          }
+
+          if (!resp.ok || !parsed?.ok) {
+            api.logger.error(
+              `telegram_notify: failed status=${resp.status} body=${raw.slice(0, 400)}`
+            );
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(
+                    {
+                      sent: false,
+                      http_status: resp.status,
+                      error: parsed?.description || raw || "telegram api error",
+                    },
+                    null,
+                    2
+                  ),
+                },
+              ],
+            };
+          }
+
+          const messageId = parsed?.result?.message_id ?? null;
+          const corr = params.correlation_id ? ` corr=${params.correlation_id}` : "";
+          api.logger.info(
+            `telegram_notify: sent chat_id=${ADMIN_USER_ID} message_id=${messageId}${corr}`
+          );
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    sent: true,
+                    chat_id: ADMIN_USER_ID,
+                    message_id: messageId,
+                    correlation_id: params.correlation_id || null,
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        } catch (err) {
+          api.logger.error(`telegram_notify: exception: ${err}`);
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    sent: false,
+                    error: String(err),
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+      },
+    });
+
     // --- admin_search: поиск по ВСЕМ таблицам (только админ) ---
     api.registerTool({
       name: "admin_search",
