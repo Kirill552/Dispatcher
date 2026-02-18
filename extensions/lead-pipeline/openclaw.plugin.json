@@ -1,0 +1,20 @@
+{
+  "id": "lead-pipeline",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "vkToken":                { "type": "string", "description": "VK community API token" },
+      "vkGroupIds":             { "type": "array", "items": { "type": "string" }, "description": "VK group short names or IDs (without minus)" },
+      "telegramBotToken":       { "type": "string", "description": "Telegram bot token" },
+      "notifyUserId":           { "type": "string", "description": "Telegram user ID владельца для уведомлений" },
+      "botUsername":            { "type": "string", "description": "Telegram bot @username без @ (для ссылки в VK-комментарии)" },
+      "sheetsId":               { "type": "string", "description": "Google Sheets spreadsheet ID" },
+      "sheetsServiceAccountJson": { "type": "string", "description": "JSON строка service account credentials" },
+      "openrouterApiKey":       { "type": "string", "description": "OpenRouter API key для LLM-квалификации" },
+      "pollIntervalMs":         { "type": "number", "description": "Интервал polling VK в мс", "default": 300000 },
+      "vkCommentDailyLimit":    { "type": "number", "description": "Макс комментариев в сутки", "default": 20 }
+    },
+    "required": ["vkToken", "vkGroupIds", "telegramBotToken", "notifyUserId", "botUsername", "openrouterApiKey"]
+  }
+}
