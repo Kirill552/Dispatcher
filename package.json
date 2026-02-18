@@ -4,6 +4,7 @@
   "private": true,
   "description": "OpenClaw AI dispatcher for freight logistics",
   "dependencies": {
-    "@sinclair/typebox": "^0.32.0"
+    "@sinclair/typebox": "^0.32.0",
+    "googleapis": "^144.0.0"
   }
 }

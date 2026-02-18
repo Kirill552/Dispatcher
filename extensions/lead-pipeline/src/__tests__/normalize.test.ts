@@ -27,3 +27,32 @@ describe("normalizeVkPost", () => {
     expect(lead.raw_text.length).toBeLessThanOrEqual(2000);
   });
 });
+
+import { buildSheetRow } from "../sheets.js";
+import type { LeadRecord, QualifyResult } from "../types.js";
+
+describe("buildSheetRow", () => {
+  it("строит строку из 12 колонок", () => {
+    const lead: LeadRecord = {
+      id: "abcdef1234567890",
+      source: "vk",
+      source_item_id: "vk_wall-123_456",
+      source_group: "cargo_russia",
+      contact: "vk:67890",
+      contact_url: "https://vk.com/wall-123_456",
+      raw_text: "Нужна машина",
+      created_at: "2026-02-18T10:00:00.000Z",
+    };
+    const qualify: QualifyResult = {
+      is_cargo_request: true,
+      from_city: "Москва",
+      to_city: "Екб",
+      cargo: "техника",
+      weight_kg: 2000,
+    };
+    const row = buildSheetRow(lead, qualify);
+    expect(row).toHaveLength(12);
+    expect(row[6]).toBe("Москва→Екб");
+    expect(row[10]).toBe("Новый");
+  });
+});
