@@ -20,6 +20,7 @@ interface ArticleMeta {
   title: string;
   description: string;
   date: string;
+  isoDate: string;
   keywords: string[];
   html: string;
   mtime: number;
@@ -39,12 +40,15 @@ async function loadArticle(slug: string): Promise<ArticleMeta | null> {
     const raw = await readFile(filePath, "utf-8");
     const { data, content } = matter(raw);
     const html = await marked.parse(content);
+    const sourceDate = data.date ? new Date(data.date) : new Date(fileStat.mtimeMs);
+    const isoDate = toIsoDate(sourceDate);
 
     const article: ArticleMeta = {
       slug,
       title: data.title || slug,
       description: data.description || "",
-      date: data.date ? formatDate(data.date) : "",
+      date: formatDate(sourceDate),
+      isoDate,
       keywords: Array.isArray(data.keywords) ? data.keywords : [],
       html,
       mtime: fileStat.mtimeMs,
@@ -71,10 +75,8 @@ async function listArticles(): Promise<ArticleMeta[]> {
 
     // Sort by date descending
     articles.sort((a, b) => {
-      if (!a.date && !b.date) return 0;
-      if (!a.date) return 1;
-      if (!b.date) return -1;
-      return b.date.localeCompare(a.date);
+      if (a.isoDate && b.isoDate) return b.isoDate.localeCompare(a.isoDate);
+      return b.mtime - a.mtime;
     });
 
     return articles;
@@ -93,6 +95,12 @@ function formatDate(date: string | Date): string {
   });
 }
 
+function toIsoDate(date: string | Date | number): string {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return new Date().toISOString().slice(0, 10);
+  return d.toISOString().slice(0, 10);
+}
+
 // --- Server ---
 const app = Fastify({ logger: true });
 
@@ -100,6 +108,14 @@ const app = Fastify({ logger: true });
 await app.register(fastifyStatic, {
   root: join(__dirname, "public"),
   prefix: "/public/",
+  maxAge: "30d",
+});
+
+// Root-level static files (favicon.ico, site.webmanifest и т.д.)
+await app.register(fastifyStatic, {
+  root: join(__dirname, "public", "root"),
+  prefix: "/",
+  decorateReply: false,
   maxAge: "30d",
 });
 
@@ -119,6 +135,16 @@ app.get("/", async (_req, reply) => {
 // Услуги
 app.get("/uslugi", async (_req, reply) => {
   return reply.view("uslugi.ejs");
+});
+
+// Стоимость грузоперевозки
+app.get("/stoimost-gruzoperevozki", async (_req, reply) => {
+  return reply.view("stoimost-gruzoperevozki.ejs");
+});
+
+// Межгородние грузоперевозки
+app.get("/gruzoperevozki-mezhgorod", async (_req, reply) => {
+  return reply.view("gruzoperevozki-mezhgorod.ejs");
 });
 
 // О компании
@@ -154,23 +180,26 @@ app.get<{ Params: { slug: string } }>("/blog/:slug", async (req, reply) => {
 // Sitemap.xml
 app.get("/sitemap.xml", async (_req, reply) => {
   const articles = await listArticles();
+  const todayIso = toIsoDate(new Date());
   const staticPages = [
-    { url: "/", priority: "1.0", freq: "weekly" },
-    { url: "/uslugi", priority: "0.8", freq: "monthly" },
-    { url: "/o-kompanii", priority: "0.6", freq: "monthly" },
-    { url: "/kontakty", priority: "0.6", freq: "monthly" },
-    { url: "/blog", priority: "0.7", freq: "weekly" },
+    { url: "/", priority: "1.0", freq: "weekly", lastmod: todayIso },
+    { url: "/uslugi", priority: "0.9", freq: "monthly", lastmod: todayIso },
+    { url: "/stoimost-gruzoperevozki", priority: "0.9", freq: "weekly", lastmod: todayIso },
+    { url: "/gruzoperevozki-mezhgorod", priority: "0.9", freq: "weekly", lastmod: todayIso },
+    { url: "/o-kompanii", priority: "0.6", freq: "monthly", lastmod: todayIso },
+    { url: "/kontakty", priority: "0.7", freq: "monthly", lastmod: todayIso },
+    { url: "/blog", priority: "0.8", freq: "weekly", lastmod: todayIso },
   ];
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
   for (const page of staticPages) {
-    xml += `  <url>\n    <loc>${DOMAIN}${page.url}</loc>\n    <changefreq>${page.freq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${DOMAIN}${page.url}</loc>\n    <lastmod>${page.lastmod}</lastmod>\n    <changefreq>${page.freq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
   }
 
   for (const article of articles) {
-    xml += `  <url>\n    <loc>${DOMAIN}/blog/${article.slug}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${DOMAIN}/blog/${article.slug}</loc>\n    <lastmod>${article.isoDate}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
   }
 
   xml += "</urlset>";

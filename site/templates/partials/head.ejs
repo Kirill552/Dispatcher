@@ -3,22 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof title !== 'undefined' ? title + ' — Диспетчер' : 'Диспетчер — грузоперевозки по России' %></title>
-  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Грузоперевозки по России от 200 кг. Расчёт за 2 минуты, 500+ проверенных перевозчиков, полное сопровождение.' %>">
+  <%
+    const pageTitle = typeof title !== 'undefined' ? title + ' — Диспетчер' : 'Диспетчер — грузоперевозки по России';
+    const pageDescription = typeof description !== 'undefined' ? description : 'Грузоперевозки по России от 200 кг. Расчёт за 2 минуты, 500+ проверенных перевозчиков, полное сопровождение.';
+    const pagePath = typeof canonical !== 'undefined' && canonical ? canonical : '/';
+    const robotsValue = typeof robots !== 'undefined' ? robots : 'index, follow';
+  %>
+  <title><%= pageTitle %></title>
+  <meta name="description" content="<%= pageDescription %>">
+  <% if (process.env.GOOGLE_SITE_VERIFICATION) { %>
+    <meta name="google-site-verification" content="<%= process.env.GOOGLE_SITE_VERIFICATION %>">
+  <% } %>
+  <% if (process.env.YANDEX_VERIFICATION) { %>
+    <meta name="yandex-verification" content="<%= process.env.YANDEX_VERIFICATION %>">
+  <% } %>
   <% if (typeof keywords !== 'undefined') { %><meta name="keywords" content="<%= keywords %>"><% } %>
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://ai-dispatcher.ru<%= typeof canonical !== 'undefined' ? canonical : '' %>">
+  <meta name="robots" content="<%= robotsValue %>">
+  <% if (typeof canonical !== 'undefined' && canonical) { %>
+    <link rel="canonical" href="https://ai-dispatcher.ru<%= canonical %>">
+    <link rel="alternate" hreflang="ru-RU" href="https://ai-dispatcher.ru<%= canonical %>">
+    <link rel="alternate" hreflang="x-default" href="https://ai-dispatcher.ru<%= canonical %>">
+  <% } %>
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:site_name" content="Диспетчер">
   <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Диспетчер — грузоперевозки по России' %>">
-  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Грузоперевозки по России от 200 кг. Расчёт за 2 минуты.' %>">
-  <meta property="og:url" content="https://ai-dispatcher.ru<%= typeof canonical !== 'undefined' ? canonical : '' %>">
+  <meta property="og:description" content="<%= pageDescription %>">
+  <meta property="og:url" content="https://ai-dispatcher.ru<%= pagePath %>">
+  <meta property="og:image" content="https://ai-dispatcher.ru/public/images/favicon.svg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Диспетчер — грузоперевозки по России' %>">
+  <meta name="twitter:description" content="<%= pageDescription %>">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/public/images/favicon.svg">
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/yandex-icon.svg" sizes="120x120">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Диспетчер">
+  <link rel="manifest" href="/site.webmanifest">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,14 +64,34 @@
     "@type": "TransportationService",
     "name": "Диспетчер",
     "url": "https://ai-dispatcher.ru",
-    "description": "Грузоперевозки по России. Межгородние перевозки от 200 кг с полным сопровождением.",
+    "description": "Грузоперевозки по России от 200 кг. Межгородние перевозки с подбором проверенного перевозчика и сопровождением заявки.",
     "areaServed": { "@type": "Country", "name": "Россия" },
     "serviceType": "Грузоперевозки",
+    "email": "info@ai-dispatcher.ru",
+    "sameAs": ["https://t.me/ai_dispatcherBot"],
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer service",
+      "url": "https://t.me/ai_dispatcherBot",
       "availableLanguage": "Russian"
     }
   }
+  </script>
+
+  <!-- Yandex.Metrica counter -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    window.dataLayer = window.dataLayer || [];
+
+    ym(107026465, "init", {
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+      webvisor: true,
+      ecommerce: "dataLayer"
+    });
   </script>
 </head>

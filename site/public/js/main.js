@@ -7,6 +7,23 @@
   'use strict';
 
   var BOT_URL = 'https://t.me/ai_dispatcherBot';
+  var METRIKA_COUNTER_ID = 107026465;
+
+  function trackGoal(goalName) {
+    if (typeof window.ym !== 'function') return;
+    try {
+      window.ym(METRIKA_COUNTER_ID, 'reachGoal', goalName);
+    } catch (_err) {
+      // Игнорируем ошибки аналитики, чтобы не ломать сценарий пользователя.
+    }
+  }
+
+  if (window.location.pathname === '/stoimost-gruzoperevozki') {
+    trackGoal('price_page_view');
+  }
+  if (window.location.pathname === '/gruzoperevozki-mezhgorod') {
+    trackGoal('intercity_page_view');
+  }
 
   /* ---- Nav scroll effect ---- */
   var nav = document.querySelector('.nav');
@@ -98,6 +115,13 @@
     setTimeout(function () { toast.classList.remove('toast--visible'); }, 4000);
   }
 
+  /* ---- Telegram link tracking ---- */
+  document.querySelectorAll('a[href*="t.me/ai_dispatcherBot"]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      trackGoal('telegram_click');
+    });
+  });
+
   /* ---- Quote form → Telegram ---- */
   var quoteForm = document.querySelector('.quote-form form');
   if (quoteForm) {
@@ -119,7 +143,9 @@
         : 'Хочу рассчитать стоимость грузоперевозки';
 
       showToast('Напишите боту: ' + message);
-      window.open(BOT_URL, '_blank');
+      trackGoal('quote_form_submit');
+      trackGoal('telegram_click');
+      window.open(BOT_URL + '?start=site_quote_form', '_blank');
       quoteForm.reset();
     });
   }
@@ -130,7 +156,9 @@
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
       showToast('Откроется Telegram — напишите ваш вопрос боту');
-      window.open(BOT_URL, '_blank');
+      trackGoal('contact_form_submit');
+      trackGoal('telegram_click');
+      window.open(BOT_URL + '?start=site_contact_form', '_blank');
       contactForm.reset();
     });
   }

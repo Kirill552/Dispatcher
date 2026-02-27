@@ -1,4 +1,10 @@
 <body>
+<noscript><div><img src="https://mc.yandex.ru/watch/107026465" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<%
+  const isHomePage = typeof currentPage !== 'undefined' && currentPage === 'index';
+  const navCtaHref = isHomePage ? '#quote' : 'https://t.me/ai_dispatcherBot?start=site_nav';
+  const navCtaTarget = isHomePage ? '' : ' target="_blank" rel="noopener"';
+%>
 <nav class="nav" role="navigation" aria-label="Основная навигация">
   <div class="nav__inner">
     <a href="/" class="nav__logo" aria-label="Диспетчер — на главную">
@@ -14,7 +20,7 @@
       <a href="/kontakty" class="nav__link<%= typeof currentPage !== 'undefined' && currentPage === 'kontakty' ? ' nav__link--active' : '' %>">Контакты</a>
     </div>
 
-    <a href="#quote" class="btn btn--accent btn--sm nav__cta">Рассчитать</a>
+    <a href="<%= navCtaHref %>" class="btn btn--accent btn--sm nav__cta"<%- navCtaTarget %>>Рассчитать</a>
 
     <button class="nav__burger" aria-label="Меню" aria-expanded="false">
       <span></span>
@@ -30,5 +36,5 @@
   <a href="/o-kompanii" class="nav__link">О компании</a>
   <a href="/blog" class="nav__link">Блог</a>
   <a href="/kontakty" class="nav__link">Контакты</a>
-  <a href="#quote" class="btn btn--accent btn--full" style="margin-top: auto;">Рассчитать стоимость</a>
+  <a href="<%= navCtaHref %>" class="btn btn--accent btn--full" style="margin-top: auto;"<%- navCtaTarget %>>Рассчитать стоимость</a>
 </div>

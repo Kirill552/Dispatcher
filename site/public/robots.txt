@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
-Disallow: /webchat/
+
+User-agent: YandexAdditional
+Allow: /
 
 Sitemap: https://ai-dispatcher.ru/sitemap.xml
 

@@ -1,0 +1,149 @@
+<%- include('partials/head', {
+  title: 'Межгородние грузоперевозки по России',
+  description: 'Межгородние грузоперевозки по России от 200 кг: как проходит работа, какие нужны данные для заявки и как быстро получить предложения перевозчиков.',
+  canonical: '/gruzoperevozki-mezhgorod',
+  keywords: 'грузоперевозки межгород, межгородние перевозки, перевозка груза по россии, перевозка москва казань'
+}) %>
+<%- include('partials/nav', { currentPage: '' }) %>
+
+<div class="page-header">
+  <div class="container">
+    <h1 class="reveal">Межгородние грузоперевозки</h1>
+    <p class="lead reveal reveal--delay-1">Подбор перевозчика по России с проверкой и сопровождением на всём маршруте.</p>
+  </div>
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="service-card reveal" style="max-width: 960px; margin: 0 auto;">
+      <span class="section__label">Краткий ответ</span>
+      <h2 style="margin-bottom: var(--sp-md);">Как заказать межгороднюю перевозку?</h2>
+      <p style="margin-bottom: var(--sp-md); color: var(--c-gray-700); line-height: 1.8;">
+        Дайте 4 параметра: откуда, куда, вес и дату загрузки. Диспетчер проверит маршрут, подберёт перевозчиков
+        и предложит варианты со ставкой и условиями оплаты.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="https://t.me/ai_dispatcherBot?start=site_intercity" class="btn btn--accent" target="_blank" rel="noopener">Оставить заявку в Telegram</a>
+        <a href="/stoimost-gruzoperevozki" class="btn btn--outline">Посмотреть ориентиры по цене</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Процесс</span>
+      <h2>Как проходит работа по заявке</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal reveal--delay-1">
+        <div class="step__number">1</div>
+        <h4 class="step__title">Сбор данных</h4>
+        <p class="step__desc">Фиксируем маршрут, вес, тип груза, дату погрузки и удобный вариант оплаты.</p>
+      </div>
+      <div class="step reveal reveal--delay-2">
+        <div class="step__number">2</div>
+        <h4 class="step__title">Подбор перевозчиков</h4>
+        <p class="step__desc">Размещаем заявку на бирже и проверяем отклики по рейтингу, документам и опыту рейсов.</p>
+      </div>
+      <div class="step reveal reveal--delay-3">
+        <div class="step__number">3</div>
+        <h4 class="step__title">Согласование ставки</h4>
+        <p class="step__desc">Передаём 2-3 варианта с ценой, сроком и условиями. Помогаем выбрать оптимальный.</p>
+      </div>
+      <div class="step reveal reveal--delay-4">
+        <div class="step__number">4</div>
+        <h4 class="step__title">Сопровождение рейса</h4>
+        <p class="step__desc">Контролируем подачу, погрузку и выгрузку. Диспетчер остаётся на связи до закрытия заявки.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Что подготовить</span>
+      <h2>Данные для быстрого расчёта</h2>
+    </div>
+
+    <div class="grid grid--2">
+      <div class="service-card reveal">
+        <h3 class="service-card__title">Маршрут и сроки</h3>
+        <p class="service-card__desc">Город отправления, город доставки, точная дата погрузки и желаемый срок прибытия.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <h3 class="service-card__title">Параметры груза</h3>
+        <p class="service-card__desc">Вес, объём, габариты, требования к кузову, температуре, креплению и документам.</p>
+      </div>
+      <div class="service-card reveal">
+        <h3 class="service-card__title">Формат оплаты</h3>
+        <p class="service-card__desc">Безнал с НДС, безнал без НДС, наличные или перевод на карту — выбираем заранее для точной ставки.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <h3 class="service-card__title">Контакт для связи</h3>
+        <p class="service-card__desc">Телефон или Telegram для быстрых уточнений по откликам и согласованию перевозчика.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark" style="position: relative;">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label" style="color: var(--c-orange-400);">Популярные направления</span>
+      <h2>Частые маршруты</h2>
+    </div>
+
+    <div class="usp-grid">
+      <div class="usp reveal reveal--delay-1">
+        <div class="usp__icon">📍</div>
+        <div>
+          <div class="usp__title">Москва → Казань</div>
+          <p class="usp__desc">Один из самых частых маршрутов для мебели, оборудования и сборных грузов.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-2">
+        <div class="usp__icon">📍</div>
+        <div>
+          <div class="usp__title">Москва → Санкт-Петербург</div>
+          <p class="usp__desc">Регулярные рейсы с быстрым подбором по времени погрузки.</p>
+        </div>
+      </div>
+      <div class="usp reveal reveal--delay-3">
+        <div class="usp__icon">📍</div>
+        <div>
+          <div class="usp__title">Екатеринбург → Новосибирск</div>
+          <p class="usp__desc">Подходит для производственных и торговых грузов средней тоннажности.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wave-divider" style="position: absolute; bottom: -1px; left: 0; right: 0;">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+<section class="section cta-section">
+  <div class="container">
+    <h2 class="reveal">Нужна межгородняя перевозка?</h2>
+    <p class="lead reveal reveal--delay-1">Напишите маршрут и параметры груза — подберём перевозчика и ставку.</p>
+    <div class="reveal reveal--delay-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://t.me/ai_dispatcherBot?start=site_intercity_cta" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Оставить заявку</a>
+      <a href="/kontakty" class="btn btn--outline-light btn--lg">Контакты</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/telegram-fab') %>

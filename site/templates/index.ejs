@@ -18,7 +18,7 @@
         Полное сопровождение от заявки до доставки.
       </p>
       <div class="hero__actions">
-        <a href="https://t.me/ai_dispatcherBot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">
+        <a href="https://t.me/ai_dispatcherBot?start=site_hero" class="btn btn--accent btn--lg" target="_blank" rel="noopener">
           <svg class="btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
           Написать в Telegram
         </a>
@@ -80,6 +80,24 @@
     <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
       <path d="M0,80 C240,120 480,40 720,80 C960,120 1200,40 1440,80 L1440,120 L0,120 Z" fill="#ffffff"/>
     </svg>
+  </div>
+</section>
+
+<!-- ============ ANSWER FIRST ============ -->
+<section class="section" style="padding-top: var(--sp-3xl);">
+  <div class="container">
+    <div class="service-card reveal" style="max-width: 960px; margin: 0 auto;">
+      <span class="section__label">Краткий ответ</span>
+      <h2 style="margin-bottom: var(--sp-md);">Сколько стоит грузоперевозка по России?</h2>
+      <p style="margin-bottom: var(--sp-md); color: var(--c-gray-700); line-height: 1.8;">
+        Стоимость зависит от маршрута, веса, объёма, типа кузова и даты загрузки. По большинству направлений
+        мы даём предварительный расчёт за 2 минуты, а затем подбираем 2-3 предложения от проверенных перевозчиков.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/stoimost-gruzoperevozki" class="btn btn--outline">Посмотреть ориентиры цен</a>
+        <a href="/gruzoperevozki-mezhgorod" class="btn btn--outline">Условия по межгороду</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -320,7 +338,7 @@
           <span class="faq-question__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
         </button>
         <div class="faq-answer">
-          <p>Да! Telegram — наш основной канал связи. Напишите нам: <a href="https://t.me/ai_dispatcherBot" target="_blank" rel="noopener">@ai_dispatcherBot</a>. Диспетчер ответит за 1-2 минуты.</p>
+          <p>Да! Telegram — наш основной канал связи. Напишите нам: <a href="https://t.me/ai_dispatcherBot?start=site_faq" target="_blank" rel="noopener">@ai_dispatcherBot</a>. Диспетчер ответит за 1-2 минуты.</p>
         </div>
       </div>
     </div>
@@ -333,13 +351,54 @@
     <h2 class="reveal">Нужна грузоперевозка?</h2>
     <p class="lead reveal reveal--delay-1">Напишите нам — рассчитаем стоимость за 2 минуты и подберём проверенного перевозчика.</p>
     <div class="reveal reveal--delay-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-      <a href="https://t.me/ai_dispatcherBot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">
+      <a href="https://t.me/ai_dispatcherBot?start=site_cta" class="btn btn--accent btn--lg" target="_blank" rel="noopener">
         Написать в Telegram
       </a>
       <a href="#quote" class="btn btn--outline-light btn--lg">Заполнить форму</a>
     </div>
   </div>
 </section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Какой минимальный вес груза?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Мы работаем с грузами от 200 кг. Для меньших объёмов обычно подходят курьерские службы."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Как быстро вы находите перевозчика?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Обычно первые предложения приходят за 15-30 минут. На популярных направлениях быстрее."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Какие направления обслуживаете?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Работаем по всей России, в том числе по межгородним направлениям."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Как формируется цена?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Цена зависит от маршрута, веса, объёма, типа кузова, сроков и особенностей погрузки."
+      }
+    }
+  ]
+}
+</script>
 
 <%- include('partials/footer') %>
 <%- include('partials/telegram-fab') %>

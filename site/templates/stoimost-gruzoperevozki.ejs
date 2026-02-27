@@ -1,0 +1,148 @@
+<%- include('partials/head', {
+  title: 'Стоимость грузоперевозки по России',
+  description: 'Стоимость грузоперевозки по России: от чего зависит цена, ориентиры по тарифам, типы оплаты и как быстро получить точный расчёт.',
+  canonical: '/stoimost-gruzoperevozki',
+  keywords: 'стоимость грузоперевозки, грузоперевозки цена, сколько стоит грузоперевозка, грузоперевозки по россии стоимость'
+}) %>
+<%- include('partials/nav', { currentPage: '' }) %>
+
+<div class="page-header">
+  <div class="container">
+    <h1 class="reveal">Стоимость грузоперевозки по России</h1>
+    <p class="lead reveal reveal--delay-1">Ориентиры по цене, понятные условия оплаты и быстрый расчёт под ваш маршрут.</p>
+  </div>
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="service-card reveal" style="max-width: 960px; margin: 0 auto;">
+      <span class="section__label">Краткий ответ</span>
+      <h2 style="margin-bottom: var(--sp-md);">Сколько стоит перевозка?</h2>
+      <p style="margin-bottom: var(--sp-md); color: var(--c-gray-700); line-height: 1.8;">
+        Точная стоимость зависит от направления, веса, объёма, типа кузова и даты погрузки.
+        Для большинства межгородних заявок предварительный расчёт даём за 2 минуты,
+        финальную ставку подтверждаем после подбора перевозчика.
+      </p>
+      <a href="https://t.me/ai_dispatcherBot?start=site_price" class="btn btn--accent" target="_blank" rel="noopener">Получить расчёт в Telegram</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">От чего зависит цена</span>
+      <h2>Основные факторы расчёта</h2>
+    </div>
+
+    <div class="grid grid--2">
+      <div class="service-card reveal">
+        <h3 class="service-card__title">Маршрут и плечо перевозки</h3>
+        <p class="service-card__desc">Чем длиннее и сложнее маршрут, тем выше ставка. Важны сезонность, загруженность трасс и обратные загрузки.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <h3 class="service-card__title">Вес, объём и характер груза</h3>
+        <p class="service-card__desc">Хрупкие, температурные и негабаритные грузы требуют специального транспорта, поэтому цена выше базовой.</p>
+      </div>
+      <div class="service-card reveal">
+        <h3 class="service-card__title">Тип кузова</h3>
+        <p class="service-card__desc">Тент, фургон, рефрижератор, борт и контейнер имеют разные тарифы и доступность на направлении.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <h3 class="service-card__title">Сроки и условия погрузки</h3>
+        <p class="service-card__desc">Срочная подача, ночная погрузка, простой на объекте и особые требования по документам влияют на ставку.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Ориентиры</span>
+      <h2>Примерные диапазоны по межгороду</h2>
+      <p class="lead">Ниже усреднённые ориентиры. Итоговая стоимость всегда считается под конкретную заявку.</p>
+    </div>
+
+    <div class="service-card reveal" style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; min-width: 680px;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding: 12px; border-bottom: 1px solid var(--c-gray-200);">Тип перевозки</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 1px solid var(--c-gray-200);">Ориентир</th>
+            <th style="text-align: left; padding: 12px; border-bottom: 1px solid var(--c-gray-200);">Когда применяется</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">Газель, межгород</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">от 28 ₽/км</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">Малый объём, срочная подача, 1.5-3 т</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">Тент 5-10 т</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">от 45 ₽/км</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">Стандартные грузы, регулярные рейсы</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">Тент 20 т</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">от 70 ₽/км</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--c-gray-100);">Полная загрузка, дальние маршруты</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px;">Рефрижератор</td>
+            <td style="padding: 12px;">от 85 ₽/км</td>
+            <td style="padding: 12px;">Температурный режим, продукты и фарма</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="section__label">Оплата</span>
+      <h2>Какие варианты оплаты доступны</h2>
+    </div>
+
+    <div class="grid grid--2">
+      <div class="service-card reveal">
+        <h3 class="service-card__title">Безнал с НДС</h3>
+        <p class="service-card__desc">Подходит для компаний с закрывающими документами и регулярными перевозками.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <h3 class="service-card__title">Безнал без НДС</h3>
+        <p class="service-card__desc">Часто выбирают ИП и малый бизнес для оптимизации итоговой ставки.</p>
+      </div>
+      <div class="service-card reveal">
+        <h3 class="service-card__title">Наличными</h3>
+        <p class="service-card__desc">Возможна по согласованию с перевозчиком и условиями сделки.</p>
+      </div>
+      <div class="service-card reveal reveal--delay-1">
+        <h3 class="service-card__title">Перевод на карту</h3>
+        <p class="service-card__desc">Опция доступна не на всех направлениях, уточняется в момент согласования.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section cta-section">
+  <div class="container">
+    <h2 class="reveal">Нужен точный расчёт под ваш груз?</h2>
+    <p class="lead reveal reveal--delay-1">Напишите маршрут, вес и дату погрузки — ответим в Telegram за 2 минуты.</p>
+    <div class="reveal reveal--delay-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="https://t.me/ai_dispatcherBot?start=site_price_cta" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Рассчитать в Telegram</a>
+      <a href="/gruzoperevozki-mezhgorod" class="btn btn--outline-light btn--lg">Условия межгорода</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/telegram-fab') %>

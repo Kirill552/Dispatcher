@@ -1,12 +1,12 @@
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk";
-import { normalizeVkPost } from "./src/normalize.js";
-import { createDedupeStore } from "./src/dedupe.js";
-import { qualifyLead } from "./src/qualify.js";
-import { notifyOwner } from "./src/notify.js";
-import { buildCommentText, postVkComment } from "./src/vk-comment.js";
-import { appendLeadToSheets } from "./src/sheets.js";
-import { fetchAllGroupPosts } from "./src/ingest/vk.js";
-import type { LeadRecord } from "./src/types.js";
+import { normalizeVkPost } from "./src/normalize.ts";
+import { createDedupeStore } from "./src/dedupe.ts";
+import { qualifyLead } from "./src/qualify.ts";
+import { notifyOwner } from "./src/notify.ts";
+import { buildCommentText, postVkComment } from "./src/vk-comment.ts";
+import { appendLeadToSheets } from "./src/sheets.ts";
+import { fetchAllGroupPosts } from "./src/ingest/vk.ts";
+import type { LeadRecord } from "./src/types.ts";
 
 interface LeadPipelineConfig {
   vkToken: string;

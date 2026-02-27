@@ -32,9 +32,30 @@
   <div class="container">
     <h2>Нужна грузоперевозка?</h2>
     <p class="lead">Напишите диспетчеру — рассчитаем стоимость за 2 минуты.</p>
-    <a href="https://t.me/ai_dispatcherBot" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Написать в Telegram</a>
+    <a href="https://t.me/ai_dispatcherBot?start=site_blog_article" class="btn btn--accent btn--lg" target="_blank" rel="noopener">Написать в Telegram</a>
   </div>
 </section>
+
+<script type="application/ld+json">
+<%- JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: article.title,
+  description: article.description || "",
+  datePublished: article.isoDate || undefined,
+  dateModified: article.isoDate || undefined,
+  mainEntityOfPage: "https://ai-dispatcher.ru/blog/" + article.slug,
+  author: {
+    "@type": "Organization",
+    name: "Диспетчер"
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Диспетчер",
+    url: "https://ai-dispatcher.ru"
+  }
+}, null, 2) %>
+</script>
 
 <%- include('partials/footer') %>
 <%- include('partials/telegram-fab') %>
