@@ -8,6 +8,8 @@
     const pageDescription = typeof description !== 'undefined' ? description : 'Грузоперевозки по России от 200 кг. Расчёт за 2 минуты, 500+ проверенных перевозчиков, полное сопровождение.';
     const pagePath = typeof canonical !== 'undefined' && canonical ? canonical : '/';
     const robotsValue = typeof robots !== 'undefined' ? robots : 'index, follow';
+    const siteDomain = process.env.DOMAIN || 'https://ai-dispatcher.ru';
+    const socialImageUrl = `${siteDomain}/public/images/og-image.png`;
   %>
   <title><%= pageTitle %></title>
   <meta name="description" content="<%= pageDescription %>">
@@ -31,13 +33,19 @@
   <meta property="og:site_name" content="Диспетчер">
   <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Диспетчер — грузоперевозки по России' %>">
   <meta property="og:description" content="<%= pageDescription %>">
-  <meta property="og:url" content="https://ai-dispatcher.ru<%= pagePath %>">
-  <meta property="og:image" content="https://ai-dispatcher.ru/public/images/favicon.svg">
+  <meta property="og:url" content="<%= siteDomain %><%= pagePath %>">
+  <meta property="og:image" content="<%= socialImageUrl %>">
+  <meta property="og:image:secure_url" content="<%= socialImageUrl %>">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Логотип сервиса Диспетчер">
 
   <!-- Twitter -->
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Диспетчер — грузоперевозки по России' %>">
   <meta name="twitter:description" content="<%= pageDescription %>">
+  <meta name="twitter:image" content="<%= socialImageUrl %>">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
