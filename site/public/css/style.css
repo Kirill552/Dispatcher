@@ -367,16 +367,10 @@ p:last-child { margin-bottom: 0; }
 }
 
 .nav__logo-icon {
-  width: 36px;
   height: 36px;
-  background: var(--c-accent);
+  width: auto;
   border-radius: var(--r-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--c-white);
-  font-weight: 800;
-  font-size: 1.1rem;
+  display: block;
 }
 
 .nav__links {
