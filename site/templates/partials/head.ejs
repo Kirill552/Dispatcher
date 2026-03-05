@@ -89,6 +89,38 @@
     }
   }
   </script>
+  <% if (typeof canonical !== 'undefined' && canonical && canonical !== '/') {
+    const breadcrumbNames = {
+      '/uslugi': 'Услуги',
+      '/stoimost-gruzoperevozki': 'Стоимость',
+      '/gruzoperevozki-mezhgorod': 'Межгород',
+      '/o-kompanii': 'О компании',
+      '/kontakty': 'Контакты',
+      '/blog': 'Блог'
+    };
+    const pageName = breadcrumbNames[canonical] || (typeof title !== 'undefined' ? title : '');
+    const isBlog = canonical.startsWith('/blog/');
+    const items = [{ name: 'Главная', url: 'https://ai-dispatcher.ru/' }];
+    if (isBlog) {
+      items.push({ name: 'Блог', url: 'https://ai-dispatcher.ru/blog' });
+      items.push({ name: pageName, url: 'https://ai-dispatcher.ru' + canonical });
+    } else if (pageName) {
+      items.push({ name: pageName, url: 'https://ai-dispatcher.ru' + canonical });
+    }
+  %>
+  <script type="application/ld+json">
+  <%- JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": item.name,
+      "item": item.url
+    }))
+  }) %>
+  </script>
+  <% } %>
 
   <!-- Yandex.Metrica counter -->
   <script type="text/javascript">

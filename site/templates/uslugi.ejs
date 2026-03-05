@@ -1,6 +1,6 @@
 <%- include('partials/head', {
-  title: 'Услуги — виды грузоперевозок',
-  description: 'Межгородние грузоперевозки по России: тентованные, рефрижераторы, фургоны, бортовые, контейнерные. От 200 кг, 500+ перевозчиков.',
+  title: 'Услуги — виды грузоперевозок: газель, тент, рефрижератор',
+  description: 'Межгородние грузоперевозки по России: газель от 28 руб/км, тентованные, рефрижераторы, фургоны, бортовые. От 200 кг, 500+ перевозчиков.',
   canonical: '/uslugi',
   keywords: 'грузоперевозки межгород, тентованные перевозки, рефрижератор, фургон, бортовой, контейнер'
 }) %>
@@ -32,7 +32,18 @@
     </div>
 
     <div class="grid grid--2" style="gap: var(--sp-2xl);">
-      <div class="service-card reveal" id="tent">
+      <div class="service-card reveal" id="gazel">
+        <div class="service-card__icon">🚐</div>
+        <h3 class="service-card__title">Газель / малотоннажные</h3>
+        <p class="service-card__desc">Грузоперевозки газелью межгород — для заказов от 200 кг до 3 тонн. Быстрая подача, экономичная ставка от 28 руб/км.</p>
+        <ul style="margin-top: var(--sp-md); color: var(--c-gray-500); font-size: var(--fs-small);">
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Грузоподъёмность: 1.5–3 тонны</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg); margin-bottom: var(--sp-xs);">Объём: до 16 м³</li>
+          <li style="list-style: disc; margin-left: var(--sp-lg);">Цена: от 28 руб/км межгород</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal reveal--delay-1" id="tent">
         <div class="service-card__icon">🚛</div>
         <h3 class="service-card__title">Тентованный</h3>
         <p class="service-card__desc">Самый универсальный тип кузова. Подходит для большинства грузов: товары народного потребления, оборудование, стройматериалы, паллеты.</p>
@@ -89,6 +100,31 @@
     </div>
   </div>
 </section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Межгородние грузоперевозки",
+  "provider": {
+    "@type": "Organization",
+    "name": "Диспетчер",
+    "url": "https://ai-dispatcher.ru"
+  },
+  "areaServed": { "@type": "Country", "name": "Россия" },
+  "description": "Межгородние грузоперевозки по России от 200 кг: тентованные, рефрижераторы, фургоны, бортовые. 500+ проверенных перевозчиков.",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Типы кузовов",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Тентованный", "description": "До 20 тонн, до 120 м³. Загрузка сверху, сбоку, сзади." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Рефрижератор", "description": "Температурный режим от -20°C до +12°C. До 20 тонн." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Фургон", "description": "Закрытый кузов для ценных грузов. До 10 тонн." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Бортовой", "description": "Для негабаритных грузов. До 25 тонн. Загрузка краном." } }
+    ]
+  }
+}
+</script>
 
 <%- include('partials/footer') %>
 <%- include('partials/telegram-fab') %>
