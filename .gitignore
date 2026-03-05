@@ -54,6 +54,9 @@ docker-data/
 
 # Локальные заметки
 *.txt
+!site/public/root/llms.txt
+!site/public/root/llms-full.txt
+!site/public/robots.txt
 
 # Приватные файлы (IP, SSH, серверные детали)
 CLAUDE.md
